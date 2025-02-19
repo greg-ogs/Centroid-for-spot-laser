@@ -73,43 +73,12 @@ class superpixels:
         fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments))
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(mark_boundaries(image, segments))
+        plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
         plt.axis("off")
 
         plt.show()
-        self.center_of_spot(image, segments)
-
-    def calculate_superpixels_felzenszwalb(self):
-        """
-        Calculates superpixels for the given image and displays the segmented regions using
-        the Felzenszwalb segmentation technique. This method applies the Felzenszwalb algorithm
-        to generate superpixels and displays the segmented image with boundaries.
-
-        :raises ValueError: If the input image is not in a valid format.
-        :return:
-            None
-        """
-        from skimage.segmentation import felzenszwalb
-
-        image_data = img_as_float(imread(self.image_ref))
-        image_data = np.array(image_data)
-        if len(image_data.shape) == 3:
-            image = rgb2gray(image_data)
-        else:
-            a_array = image_data
-            b_array = image_data
-            c_array = np.dstack((a_array, b_array))
-            image = np.dstack((c_array, b_array))
-
-        segments = felzenszwalb(image, scale=500, sigma=0.5, min_size=500)
-
-        # Show the output of Felzenszwalb
-        fig = plt.figure("Superpixels -- Felzenszwalb")
-        ax = fig.add_subplot(1, 1, 1)
-        ax.imshow(mark_boundaries(image_data, segments))
-        plt.axis("off")
-
-        plt.show()
-        self.center_of_spot(image_data, segments)
+        X, Y = self.center_of_spot(image, segments)
+        print('SLIC centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
 
     def calculate_superpixels_quickshift(self):
         """
@@ -133,16 +102,53 @@ class superpixels:
             c_array = np.dstack((a_array, b_array))
             image = np.dstack((c_array, b_array))
 
-        segments = quickshift(image, kernel_size=3, max_dist=6, ratio=0.5)
+        segments = quickshift(image, kernel_size=5, max_dist=19, ratio=5)
 
         # Show the output of Quickshift
         fig = plt.figure("Superpixels -- Quickshift")
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(mark_boundaries(image_data, segments))
+        plt.title("Superpixels -- Quickshift")
         plt.axis("off")
 
         plt.show()
-        #self.center_of_spot(image_data, segments)
+        X, Y = self.center_of_spot(image, segments)
+        print('Quick-shift centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
+
+    def calculate_superpixels_felzenszwalb(self):
+        """
+        Calculates superpixels for the given image and displays the segmented regions using
+        the Felzenszwalb segmentation technique. This method applies the Felzenszwalb algorithm
+        to generate superpixels and displays the segmented image with boundaries.
+
+        :raises ValueError: If the input image is not in a valid format.
+        :return:
+            None
+        """
+        from skimage.segmentation import felzenszwalb
+
+        image_data = img_as_float(imread(self.image_ref))
+        image_data = np.array(image_data)
+        if len(image_data.shape) == 3:
+            image = rgb2gray(image_data)
+        else:
+            a_array = image_data
+            b_array = image_data
+            c_array = np.dstack((a_array, b_array))
+            image = np.dstack((c_array, b_array))
+
+        segments = felzenszwalb(image, scale=300, sigma=0.5, min_size=200)
+
+        # Show the output of Felzenszwalb
+        fig = plt.figure("Superpixels -- Felzenszwalb")
+        ax = fig.add_subplot(1, 1, 1)
+        ax.imshow(mark_boundaries(image_data, segments))
+        plt.title("Superpixels -- Felzenszwalb")
+        plt.axis("off")
+
+        plt.show()
+        X, Y = self.center_of_spot(image, segments)
+        print('Felzenszwalb centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
 
     @staticmethod
     def center_of_spot(image, segments):
@@ -195,7 +201,6 @@ class superpixels:
         X = XselectCoor
         YselectCoor = maxVC[0][arsz]  # coordenada intermedia en y
         Y = YselectCoor
-        print('X = ' + str(X) + ' & Y = ' + str(Y) )
         return X, Y
 
 def calculate_centroid(image_path):
@@ -224,7 +229,7 @@ def calculate_centroid(image_path):
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
 
     # Step 4: Threshold the image to create a binary version
-    _, binary = cv2.threshold(blurred, 127, 255, cv2.THRESH_BINARY)
+    _, binary = cv2.threshold(blurred, 100, 255, cv2.THRESH_BINARY)
 
     # Step 5: Apply morphological operations to clean and isolate the object
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
@@ -318,8 +323,4 @@ def calculate_centroid_scikit(image_path):
     return int(cx), int(cy)
 
 if __name__ == '__main__':
-    image_path = "image100.png"
-    superpixels_centroid = superpixels(image_path)
-    superpixels_centroid.calculate_superpixels_slic()
-    calculate_centroid(image_path)
-    calculate_centroid_scikit(image_path)
+    pass
