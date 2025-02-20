@@ -1,9 +1,12 @@
-# test_all_images.py
+'''
+Created by greg-ogs
+'''
+import csv
 import os
 import time
-from centroid_calculator import superpixels, calculate_centroid, calculate_centroid_scikit
+from threading import Thread
 
-import csv
+from centroid_calculator import superpixels, calculate_centroid, calculate_centroid_scikit
 
 """
 This is a previous conclusion, for PID the superpixel bring a better result to detect the center of the spot in the border of the image.
@@ -75,5 +78,16 @@ def test_algorithms_on_all_images(directory_path, n_segments=100, compactness=10
 
 
 if __name__ == "__main__":
-    images_directory = "images"  # Adjust if needed
-    test_algorithms_on_all_images(images_directory)
+    dataset_directory = "images"
+    image_directory_paths = []
+    for image_directory in os.listdir(dataset_directory):
+        image_directory_paths.append(os.path.join(dataset_directory, image_directory))
+    threads = []  # List to store threads
+    for path in image_directory_paths:
+        thread = Thread(target=test_algorithms_on_all_images, args=(path,))
+        threads.append(thread)
+        thread.start()  # Start the thread
+
+    # Wait for all threads to complete
+    for thread in threads:
+        thread.join()

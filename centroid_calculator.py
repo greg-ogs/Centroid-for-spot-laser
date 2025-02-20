@@ -1,14 +1,14 @@
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from skimage.color import rgb2gray
 from skimage.filters import gaussian
 from skimage.filters import threshold_otsu
-from skimage.morphology import closing, disk
-from skimage.measure import label, regionprops
-from skimage.segmentation import slic, mark_boundaries
-from skimage.util import img_as_float
 from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import closing, disk
+from skimage.segmentation import slic
+from skimage.util import img_as_float
 
 
 class superpixels:
@@ -70,11 +70,11 @@ class superpixels:
         segments = slic(image, n_segments=self.n_segments, compactness=self.compactness, sigma=5)
 
         # Show the output of SLIC
-        fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments))
-        ax = fig.add_subplot(1, 1, 1)
-        ax.imshow(mark_boundaries(image, segments))
-        plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
-        plt.axis("off")
+        # fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments))
+        # ax = fig.add_subplot(1, 1, 1)
+        # ax.imshow(mark_boundaries(image, segments))
+        # plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
+        # plt.axis("off")
 
         plt.show()
         X, Y = self.center_of_spot(image, segments)
@@ -105,11 +105,11 @@ class superpixels:
         segments = quickshift(image, kernel_size=5, max_dist=19, ratio=5)
 
         # Show the output of Quickshift
-        fig = plt.figure("Superpixels -- Quickshift")
-        ax = fig.add_subplot(1, 1, 1)
-        ax.imshow(mark_boundaries(image_data, segments))
-        plt.title("Superpixels -- Quickshift")
-        plt.axis("off")
+        # fig = plt.figure("Superpixels -- Quickshift")
+        # ax = fig.add_subplot(1, 1, 1)
+        # ax.imshow(mark_boundaries(image_data, segments))
+        # plt.title("Superpixels -- Quickshift")
+        # plt.axis("off")
 
         plt.show()
         X, Y = self.center_of_spot(image, segments)
@@ -140,11 +140,11 @@ class superpixels:
         segments = felzenszwalb(image, scale=300, sigma=0.5, min_size=200)
 
         # Show the output of Felzenszwalb
-        fig = plt.figure("Superpixels -- Felzenszwalb")
-        ax = fig.add_subplot(1, 1, 1)
-        ax.imshow(mark_boundaries(image_data, segments))
-        plt.title("Superpixels -- Felzenszwalb")
-        plt.axis("off")
+        # fig = plt.figure("Superpixels -- Felzenszwalb")
+        # ax = fig.add_subplot(1, 1, 1)
+        # ax.imshow(mark_boundaries(image_data, segments))
+        # plt.title("Superpixels -- Felzenszwalb")
+        # plt.axis("off")
 
         plt.show()
         X, Y = self.center_of_spot(image, segments)
@@ -258,13 +258,13 @@ def calculate_centroid(image_path):
     print(f"Centroid of the object is at: ({cx}, {cy})")
 
     # Step 9: Optional - Display the result
-    result_image = image.copy()
-    cv2.drawContours(result_image, [largest_contour], -1, (0, 255, 0), 2)  # Draw the largest contour
-    cv2.circle(result_image, (cx, cy), 5, (0, 0, 255), -1)  # Mark the centroid with a red circle
-    plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))  # Convert BGR to RGB for matplotlib
-    plt.title("Detected Object and Centroid")
-    plt.axis('off')  # Hide axes for better visualization
-    plt.show()
+    # result_image = image.copy()
+    # cv2.drawContours(result_image, [largest_contour], -1, (0, 255, 0), 2)  # Draw the largest contour
+    # cv2.circle(result_image, (cx, cy), 5, (0, 0, 255), -1)  # Mark the centroid with a red circle
+    # plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))  # Convert BGR to RGB for matplotlib
+    # plt.title("Detected Object and Centroid")
+    # plt.axis('off')  # Hide axes for better visualization
+    # plt.show()
 
     return cx, cy
 
@@ -316,10 +316,10 @@ def calculate_centroid_scikit(image_path):
     print(f"Centroid of the object is at: ({int(cx)}, {int(cy)})")
 
     # Display the result (optional)
-    fig, ax = plt.subplots()
-    ax.imshow(image)
-    ax.plot(cx, cy, 'ro', markersize=5)  # Mark the centroid with a red circle
-    plt.show()
+    # fig, ax = plt.subplots()
+    # ax.imshow(image)
+    # ax.plot(cx, cy, 'ro', markersize=5)  # Mark the centroid with a red circle
+    # plt.show()
     return int(cx), int(cy)
 
 if __name__ == '__main__':
