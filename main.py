@@ -7,7 +7,7 @@ if __name__ == '__main__':
     #felzenszwalb
 
     start = time.time()
-    superpixels_centroid.calculate_superpixels_slic()
+    superpixels_centroid.calculate_superpixels_felzenszwalb()
     end = time.time()
     superpixels_felzenszwalb_time = end - start
 

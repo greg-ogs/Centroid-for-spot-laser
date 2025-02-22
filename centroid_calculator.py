@@ -53,7 +53,7 @@ class superpixels:
         it to grayscale if necessary, and applies the SLIC algorithm to generate superpixels.
         It also displays the segmented image with boundaries using matplotlib and calculates
         the centers of the regions.
-
+        
         :raises ValueError: If the input image is not in a valid format.
         :return:
             None
@@ -70,21 +70,21 @@ class superpixels:
             image = np.dstack((c_array, b_array))
 
         segments = slic(image, n_segments=self.n_segments, compactness=self.compactness, sigma=5)
+        X, Y = self.center_of_spot(image, segments)
+        print('SLIC centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y))
 
         # Show the output of SLIC
         fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments))
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(mark_boundaries(image, segments))
-        for i in range(segments.max() + 1):
-            segment_mask = segments == i  # Create boolean mask for current segment
-            centroid = np.round(np.mean(np.argwhere(segment_mask), axis=0)).astype(int)
-            plt.plot(centroid[1], centroid[0], marker='o', markersize=5)
+        plt.plot(X, Y, marker='o', markersize=5, color='red')
         plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
-        plt.axis("off")
-
+        plt.xlabel("Width (pixels)")
+        plt.ylabel("Height (pixels)")
+        plt.axis("on")
+        
         plt.show()
-        X, Y = self.center_of_spot(image, segments)
-        print('SLIC centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
+
 
     def calculate_superpixels_quickshift(self):
         """
@@ -109,21 +109,19 @@ class superpixels:
             image = np.dstack((c_array, b_array))
 
         segments = quickshift(image, kernel_size=5, max_dist=19, ratio=5)
-
+        X, Y = self.center_of_spot(image, segments)
+        print('Quick-shift centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
         # Show the output of Quickshift
         fig = plt.figure("Superpixels -- Quickshift")
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(mark_boundaries(image_data, segments))
-        for i in range(segments.max() + 1):
-            segment_mask = segments == i  # Create boolean mask for current segment
-            centroid = np.round(np.mean(np.argwhere(segment_mask), axis=0)).astype(int)
-            plt.plot(centroid[1], centroid[0], marker='o', markersize=5)
+        plt.plot(X, Y, marker='o', markersize=5, color='red')
         plt.title("Superpixels -- Quickshift")
-        plt.axis("off")
+        plt.xlabel("Width (pixels)")
+        plt.ylabel("Height (pixels)")
+        plt.axis("on")
 
         plt.show()
-        X, Y = self.center_of_spot(image, segments)
-        print('Quick-shift centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
 
     def calculate_superpixels_felzenszwalb(self):
         """
@@ -148,22 +146,19 @@ class superpixels:
             image = np.dstack((c_array, b_array))
 
         segments = felzenszwalb(image, scale=300, sigma=0.5, min_size=200)
-
+        X, Y = self.center_of_spot(image, segments)
+        print('Felzenszwalb centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
         # Show the output of Felzenszwalb
         fig = plt.figure("Superpixels -- Felzenszwalb")
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(mark_boundaries(image_data, segments))
-        for i in range(segments.max() + 1):
-            segment_mask = segments == i  # Create boolean mask for current segment
-            centroid = np.round(np.mean(np.argwhere(segment_mask), axis=0)).astype(int)
-            plt.plot(centroid[1], centroid[0], marker='o', markersize=5)
-
+        plt.plot(X, Y, marker='o', markersize=5, color='red')
         plt.title("Superpixels -- Felzenszwalb")
-        plt.axis("off")
+        plt.xlabel("Width (pixels)")
+        plt.ylabel("Height (pixels)")
+        plt.axis("on")
 
         plt.show()
-        X, Y = self.center_of_spot(image, segments)
-        print('Felzenszwalb centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
 
     @staticmethod
     def center_of_spot(image, segments):
@@ -277,8 +272,10 @@ def calculate_centroid(image_path):
     cv2.drawContours(result_image, [largest_contour], -1, (0, 255, 0), 2)  # Draw the largest contour
     cv2.circle(result_image, (cx, cy), 5, (0, 0, 255), -1)  # Mark the centroid with a red circle
     plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))  # Convert BGR to RGB for matplotlib
-    plt.title("Detected Object and Centroid")
-    plt.axis('off')  # Hide axes for better visualization
+    plt.title("Centroid calculated with FBM (OpenCV)")
+    plt.xlabel("Width (pixels)")
+    plt.ylabel("Height (pixels)")
+    plt.axis("on")
     plt.show()
 
     return cx, cy
@@ -333,7 +330,11 @@ def calculate_centroid_scikit(image_path):
     # Display the result (optional)
     fig, ax = plt.subplots()
     ax.imshow(image)
-    ax.plot(cx, cy, 'ro', markersize=5)  # Mark the centroid with a red circle
+    ax.plot(cx, cy, 'o', markersize=5, color='red')  # Mark the centroid with a red circle
+    plt.xlabel("Width (pixels)")
+    plt.ylabel("Height (pixels)")
+    plt.axis("on")
+    plt.title("Centrid calculated with CCL (Scikit-image)")
     plt.show()
     return int(cx), int(cy)
 
