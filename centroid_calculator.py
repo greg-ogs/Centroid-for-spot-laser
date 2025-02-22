@@ -76,13 +76,13 @@ class superpixels:
         # Show the output of SLIC
         fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments))
         ax = fig.add_subplot(1, 1, 1)
-        ax.imshow(mark_boundaries(image, segments))
-        plt.plot(X, Y, marker='o', markersize=5, color='red')
+        ax.imshow(np.rot90(mark_boundaries(image, segments)), origin='lower')
+        plt.plot(Y, 1280-X, marker='o', markersize=5, color='red')  # Swap X and Y for the rotated plot
         plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
-        plt.xlabel("Width (pixels)")
-        plt.ylabel("Height (pixels)")
+        plt.xlabel("Height (pixels)")
+        plt.ylabel("Width (pixels)")
         plt.axis("on")
-        
+
         plt.show()
 
 
@@ -114,11 +114,11 @@ class superpixels:
         # Show the output of Quickshift
         fig = plt.figure("Superpixels -- Quickshift")
         ax = fig.add_subplot(1, 1, 1)
-        ax.imshow(mark_boundaries(image_data, segments))
-        plt.plot(X, Y, marker='o', markersize=5, color='red')
+        ax.imshow(np.rot90(mark_boundaries(image_data, segments)), origin='lower')
+        plt.plot(Y, 1280-X, marker='o', markersize=5, color='red')
         plt.title("Superpixels -- Quickshift")
-        plt.xlabel("Width (pixels)")
-        plt.ylabel("Height (pixels)")
+        plt.xlabel("Height (pixels)")
+        plt.ylabel("Width (pixels)")
         plt.axis("on")
 
         plt.show()
@@ -151,11 +151,11 @@ class superpixels:
         # Show the output of Felzenszwalb
         fig = plt.figure("Superpixels -- Felzenszwalb")
         ax = fig.add_subplot(1, 1, 1)
-        ax.imshow(mark_boundaries(image_data, segments))
-        plt.plot(X, Y, marker='o', markersize=5, color='red')
+        ax.imshow(np.rot90(mark_boundaries(image_data, segments)), origin='lower')
+        plt.plot(Y, 1280-X, marker='o', markersize=5, color='red')
         plt.title("Superpixels -- Felzenszwalb")
-        plt.xlabel("Width (pixels)")
-        plt.ylabel("Height (pixels)")
+        plt.xlabel("Height (pixels)")
+        plt.ylabel("Width (pixels)")
         plt.axis("on")
 
         plt.show()
@@ -271,7 +271,7 @@ def calculate_centroid(image_path):
     result_image = image.copy()
     cv2.drawContours(result_image, [largest_contour], -1, (0, 255, 0), 2)  # Draw the largest contour
     cv2.circle(result_image, (cx, cy), 5, (0, 0, 255), -1)  # Mark the centroid with a red circle
-    plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))  # Convert BGR to RGB for matplotlib
+    plt.imshow(np.rot90(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB)), origin='lower')  # Convert BGR to RGB for matplotlib
     plt.title("Centroid calculated with FBM (OpenCV)")
     plt.xlabel("Width (pixels)")
     plt.ylabel("Height (pixels)")
@@ -329,8 +329,8 @@ def calculate_centroid_scikit(image_path):
 
     # Display the result (optional)
     fig, ax = plt.subplots()
-    ax.imshow(image)
-    ax.plot(cx, cy, 'o', markersize=5, color='red')  # Mark the centroid with a red circle
+    ax.imshow(np.rot90(image), origin='lower')
+    ax.plot(cy, 1280-cx, 'o', markersize=5, color='red')  # Mark the centroid with a red circle
     plt.xlabel("Width (pixels)")
     plt.ylabel("Height (pixels)")
     plt.axis("on")

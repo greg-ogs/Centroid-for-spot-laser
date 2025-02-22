@@ -1,7 +1,7 @@
 from centroid_calculator import *
 
 if __name__ == '__main__':
-    image_path = "images/dw/image100.png"
+    image_path = "images/c/image0.png"
     superpixels_centroid = superpixels(image_path, 100, 10)
     # Superpixels
     #felzenszwalb
