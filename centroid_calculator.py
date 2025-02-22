@@ -1,3 +1,5 @@
+import time
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,7 +9,7 @@ from skimage.filters import threshold_otsu
 from skimage.io import imread
 from skimage.measure import label, regionprops
 from skimage.morphology import closing, disk
-from skimage.segmentation import slic
+from skimage.segmentation import slic, mark_boundaries
 from skimage.util import img_as_float
 
 
@@ -70,11 +72,15 @@ class superpixels:
         segments = slic(image, n_segments=self.n_segments, compactness=self.compactness, sigma=5)
 
         # Show the output of SLIC
-        # fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments))
-        # ax = fig.add_subplot(1, 1, 1)
-        # ax.imshow(mark_boundaries(image, segments))
-        # plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
-        # plt.axis("off")
+        fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments))
+        ax = fig.add_subplot(1, 1, 1)
+        ax.imshow(mark_boundaries(image, segments))
+        for i in range(segments.max() + 1):
+            segment_mask = segments == i  # Create boolean mask for current segment
+            centroid = np.round(np.mean(np.argwhere(segment_mask), axis=0)).astype(int)
+            plt.plot(centroid[1], centroid[0], marker='o', markersize=5)
+        plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
+        plt.axis("off")
 
         plt.show()
         X, Y = self.center_of_spot(image, segments)
@@ -105,11 +111,15 @@ class superpixels:
         segments = quickshift(image, kernel_size=5, max_dist=19, ratio=5)
 
         # Show the output of Quickshift
-        # fig = plt.figure("Superpixels -- Quickshift")
-        # ax = fig.add_subplot(1, 1, 1)
-        # ax.imshow(mark_boundaries(image_data, segments))
-        # plt.title("Superpixels -- Quickshift")
-        # plt.axis("off")
+        fig = plt.figure("Superpixels -- Quickshift")
+        ax = fig.add_subplot(1, 1, 1)
+        ax.imshow(mark_boundaries(image_data, segments))
+        for i in range(segments.max() + 1):
+            segment_mask = segments == i  # Create boolean mask for current segment
+            centroid = np.round(np.mean(np.argwhere(segment_mask), axis=0)).astype(int)
+            plt.plot(centroid[1], centroid[0], marker='o', markersize=5)
+        plt.title("Superpixels -- Quickshift")
+        plt.axis("off")
 
         plt.show()
         X, Y = self.center_of_spot(image, segments)
@@ -140,11 +150,16 @@ class superpixels:
         segments = felzenszwalb(image, scale=300, sigma=0.5, min_size=200)
 
         # Show the output of Felzenszwalb
-        # fig = plt.figure("Superpixels -- Felzenszwalb")
-        # ax = fig.add_subplot(1, 1, 1)
-        # ax.imshow(mark_boundaries(image_data, segments))
-        # plt.title("Superpixels -- Felzenszwalb")
-        # plt.axis("off")
+        fig = plt.figure("Superpixels -- Felzenszwalb")
+        ax = fig.add_subplot(1, 1, 1)
+        ax.imshow(mark_boundaries(image_data, segments))
+        for i in range(segments.max() + 1):
+            segment_mask = segments == i  # Create boolean mask for current segment
+            centroid = np.round(np.mean(np.argwhere(segment_mask), axis=0)).astype(int)
+            plt.plot(centroid[1], centroid[0], marker='o', markersize=5)
+
+        plt.title("Superpixels -- Felzenszwalb")
+        plt.axis("off")
 
         plt.show()
         X, Y = self.center_of_spot(image, segments)
@@ -258,13 +273,13 @@ def calculate_centroid(image_path):
     print(f"Centroid of the object is at: ({cx}, {cy})")
 
     # Step 9: Optional - Display the result
-    # result_image = image.copy()
-    # cv2.drawContours(result_image, [largest_contour], -1, (0, 255, 0), 2)  # Draw the largest contour
-    # cv2.circle(result_image, (cx, cy), 5, (0, 0, 255), -1)  # Mark the centroid with a red circle
-    # plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))  # Convert BGR to RGB for matplotlib
-    # plt.title("Detected Object and Centroid")
-    # plt.axis('off')  # Hide axes for better visualization
-    # plt.show()
+    result_image = image.copy()
+    cv2.drawContours(result_image, [largest_contour], -1, (0, 255, 0), 2)  # Draw the largest contour
+    cv2.circle(result_image, (cx, cy), 5, (0, 0, 255), -1)  # Mark the centroid with a red circle
+    plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))  # Convert BGR to RGB for matplotlib
+    plt.title("Detected Object and Centroid")
+    plt.axis('off')  # Hide axes for better visualization
+    plt.show()
 
     return cx, cy
 
@@ -316,11 +331,53 @@ def calculate_centroid_scikit(image_path):
     print(f"Centroid of the object is at: ({int(cx)}, {int(cy)})")
 
     # Display the result (optional)
-    # fig, ax = plt.subplots()
-    # ax.imshow(image)
-    # ax.plot(cx, cy, 'ro', markersize=5)  # Mark the centroid with a red circle
-    # plt.show()
+    fig, ax = plt.subplots()
+    ax.imshow(image)
+    ax.plot(cx, cy, 'ro', markersize=5)  # Mark the centroid with a red circle
+    plt.show()
     return int(cx), int(cy)
 
 if __name__ == '__main__':
-    pass
+    image_path = "images/dw/image100.png"
+    superpixels_centroid = superpixels(image_path, 100, 10)
+    # Superpixels
+    # felzenszwalb
+
+    start = time.time()
+    superpixels_centroid.calculate_superpixels_slic()
+    end = time.time()
+    superpixels_felzenszwalb_time = end - start
+
+    # SLIC
+
+    start = time.time()
+    superpixels_centroid.calculate_superpixels_slic()
+    end = time.time()
+    superpixels_SLIC_time = end - start
+
+    # quickshift
+
+    reset = time.time()
+    superpixels_centroid.calculate_superpixels_quickshift()
+    end = time.time()
+    superpixels_quickshift_time = end - reset
+
+    # cv2 centroid
+
+    reset = time.time()
+    calculate_centroid(image_path)
+    end = time.time()
+    cv2_centroid_time = end - reset
+
+    # Scikit centroid
+
+    reset = time.time()
+    calculate_centroid_scikit(image_path)
+    end = time.time()
+    scikit_centroid_time = end - reset
+
+    print("Superpixels slic time: " + str(superpixels_SLIC_time))
+    print("Superpixels felzenszwalb time: " + str(superpixels_felzenszwalb_time))
+    print("Superpixels quickshift time: " + str(superpixels_quickshift_time))
+    print("cv2 centroid time: " + str(cv2_centroid_time))
+    print("scikit centroid time: " + str(scikit_centroid_time))

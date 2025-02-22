@@ -1,5 +1,3 @@
-import time
-
 from centroid_calculator import *
 
 if __name__ == '__main__':
@@ -8,17 +6,17 @@ if __name__ == '__main__':
     # Superpixels
     #felzenszwalb
 
-    # start = time.time()
-    # superpixels_centroid.calculate_superpixels_slic()
-    # end = time.time()
-    # superpixels_felzenszwalb_time = end - start
+    start = time.time()
+    superpixels_centroid.calculate_superpixels_slic()
+    end = time.time()
+    superpixels_felzenszwalb_time = end - start
 
     # SLIC
 
-    # start = time.time()
-    # superpixels_centroid.calculate_superpixels_slic()
-    # end = time.time()
-    # superpixels_SLIC_time = end - start
+    start = time.time()
+    superpixels_centroid.calculate_superpixels_slic()
+    end = time.time()
+    superpixels_SLIC_time = end - start
 
     #quickshift
 
@@ -29,20 +27,20 @@ if __name__ == '__main__':
 
     #cv2 centroid
 
-    # reset = time.time()
-    # calculate_centroid(image_path)
-    # end = time.time()
-    # cv2_centroid_time = end - reset
+    reset = time.time()
+    calculate_centroid(image_path)
+    end = time.time()
+    cv2_centroid_time = end - reset
 
     #Scikit centroid
 
-    # reset = time.time()
-    # calculate_centroid_scikit(image_path)
-    # end = time.time()
-    # scikit_centroid_time = end - reset
+    reset = time.time()
+    calculate_centroid_scikit(image_path)
+    end = time.time()
+    scikit_centroid_time = end - reset
 
-    # print("Superpixels slic time: " + str(superpixels_SLIC_time))
-    # print("Superpixels felzenszwalb time: " + str(superpixels_felzenszwalb_time))
+    print("Superpixels slic time: " + str(superpixels_SLIC_time))
+    print("Superpixels felzenszwalb time: " + str(superpixels_felzenszwalb_time))
     print("Superpixels quickshift time: " + str(superpixels_quickshift_time))
-    # print("cv2 centroid time: " + str(cv2_centroid_time))
-    # print("scikit centroid time: " + str(scikit_centroid_time))
+    print("cv2 centroid time: " + str(cv2_centroid_time))
+    print("scikit centroid time: " + str(scikit_centroid_time))
