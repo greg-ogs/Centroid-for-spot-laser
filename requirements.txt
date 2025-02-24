@@ -5,3 +5,5 @@ scikit-learn
 matplotlib
 tensorflow-hub
 seaborn
+pandas
+Pillow
