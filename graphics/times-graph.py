@@ -11,7 +11,7 @@ class TimesGraph:
         # Reshape the DataFrame to long format
         # We keep the original image column only for reference during reshaping; it will not be used in the plot.
         time_columns = ["Felzenszwalb Time", "SLIC Time", "Quickshift Time",
-                        "OpenCV Centroid Time", "Scikit-image Centroid Time"]
+                        "FBM Time", "CCL Time"]
         self.df_long = self.df.melt(id_vars=["Image"], value_vars=time_columns,
                                     var_name="Algorithm", value_name="Time")
         print(self.df_long.head())
@@ -52,10 +52,11 @@ class TimesGraph:
         sns.stripplot(x="Algorithm", y="Time", data=self.df_long, jitter=True, palette="muted", hue="Algorithm",
                       legend=False)
         plt.xticks(rotation=45)
-        plt.title("Algorithm Times")
-        plt.xlabel("Algorithm")
-        plt.ylabel("Time (seconds)")
+        # plt.title("Algorithm Times")
+        plt.xlabel("Algoritmo")
+        plt.ylabel("Tiempo (segundos)")
         plt.tight_layout()
+        plt.savefig("times-plot.png")
         plt.show()
 
     def point_plot(self):
@@ -104,6 +105,6 @@ if __name__ == "__main__":
     times_graph.boxplot()
     times_graph.violinplot()
     times_graph.strip_plot()
-    times_graph.point_plot()
-    times_graph.lineplot()
-    times_graph.histogram()
+    # times_graph.point_plot()
+    # times_graph.lineplot()
+    # times_graph.histogram()

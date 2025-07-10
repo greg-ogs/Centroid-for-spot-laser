@@ -74,15 +74,16 @@ class superpixels:
         print('SLIC centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y))
 
         # Show the output of SLIC
-        fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments))
+        plt.rcParams.update({'font.size': 30})
+        fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments), figsize=(11, 12.8))
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(np.rot90(mark_boundaries(image, segments)), origin='lower')
-        plt.plot(Y, 1280-X, marker='o', markersize=5, color='red')  # Swap X and Y for the rotated plot
-        plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
-        plt.xlabel("pixels")
-        plt.ylabel("pixels")
+        plt.plot(Y, 1280-X, marker='o', markersize=15, color='red')  # Swap X and Y for the rotated plot
+        # plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
+        plt.xlabel("pixeles")
+        plt.ylabel("pixeles")
         plt.axis("on")
-
+        plt.savefig('SLIC.png')
         plt.show()
 
 
@@ -108,19 +109,21 @@ class superpixels:
             c_array = np.dstack((a_array, b_array))
             image = np.dstack((c_array, b_array))
 
-        segments = quickshift(image, kernel_size=5, max_dist=19, ratio=5)
+        segments = quickshift(image, kernel_size=11, max_dist=9, ratio=5)
         X, Y = self.center_of_spot(image, segments)
         print('Quick-shift centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
         # Show the output of Quickshift
+        plt.rcParams.update({'font.size': 30})
+        plt.rcParams['figure.figsize'] = 11, 12.8
         fig = plt.figure("Superpixels -- Quickshift")
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(np.rot90(mark_boundaries(image_data, segments)), origin='lower')
-        plt.plot(Y, 1280-X, marker='o', markersize=5, color='red')
-        plt.title("Superpixels -- Quickshift")
-        plt.xlabel("pixels")
-        plt.ylabel("pixels")
+        plt.plot(Y, 1280-X, marker='o', markersize=15, color='red')
+        # plt.title("Superpixels -- Quickshift")
+        plt.xlabel("pixeles")
+        plt.ylabel("pixeles")
         plt.axis("on")
-
+        plt.savefig('Quickshift.png')
         plt.show()
 
     def calculate_superpixels_felzenszwalb(self):
@@ -149,15 +152,17 @@ class superpixels:
         X, Y = self.center_of_spot(image, segments)
         print('Felzenszwalb centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
         # Show the output of Felzenszwalb
+        plt.rcParams.update({'font.size': 30})
+        plt.rcParams['figure.figsize'] = 11, 12.8
         fig = plt.figure("Superpixels -- Felzenszwalb")
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(np.rot90(mark_boundaries(image_data, segments)), origin='lower')
-        plt.plot(Y, 1280-X, marker='o', markersize=5, color='red')
-        plt.title("Superpixels -- Felzenszwalb")
-        plt.xlabel("pixels")
-        plt.ylabel("pixels")
+        plt.plot(Y, 1280-X, marker='o', markersize=15, color='red')
+        # plt.title("Superpixels -- Felzenszwalb")
+        plt.xlabel("pixeles")
+        plt.ylabel("pixeles")
         plt.axis("on")
-
+        plt.savefig('Felzenszwalb.png')
         plt.show()
 
     @staticmethod
@@ -270,12 +275,15 @@ def calculate_centroid(image_path):
     # Step 9: Optional - Display the result
     result_image = image.copy()
     cv2.drawContours(result_image, [largest_contour], -1, (0, 255, 0), 2)  # Draw the largest contour
-    cv2.circle(result_image, (cx, cy), 5, (0, 0, 255), -1)  # Mark the centroid with a red circle
+    cv2.circle(result_image, (cx, cy), 15, (0, 0, 255), -1)  # Mark the centroid with a red circle
+    plt.rcParams.update({'font.size': 30})
+    plt.rcParams['figure.figsize'] = 11, 12.8
     plt.imshow(np.rot90(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB)), origin='lower')  # Convert BGR to RGB for matplotlib
-    plt.title("Centroid calculated with FBM")
-    plt.xlabel("pixels")
-    plt.ylabel("pixels")
+    # plt.title("Centroid calculated with FBM")
+    plt.xlabel("pixeles")
+    plt.ylabel("pixeles")
     plt.axis("on")
+    plt.savefig('FBM.png')
     plt.show()
 
     return cx, cy
@@ -328,24 +336,29 @@ def calculate_centroid_scikit(image_path):
     print(f"Centroid of the object is at: ({int(cx)}, {int(cy)})")
 
     # Display the result (optional)
+    plt.rcParams.update({'font.size': 30})
+    plt.rcParams['figure.figsize'] = 11, 12.8
     fig, ax = plt.subplots()
     ax.imshow(np.rot90(image), origin='lower')
-    ax.plot(cy, 1280-cx, 'o', markersize=5, color='red')  # Mark the centroid with a red circle
-    plt.xlabel("pixels")
-    plt.ylabel("pixels")
+    ax.plot(cy, 1280-cx, 'o', markersize=15, color='red')  # Mark the centroid with a red circle
+    plt.xlabel("pixeles")
+    plt.ylabel("pixeles")
     plt.axis("on")
-    plt.title("Centrid calculated with CCL")
+    # plt.title("Centrid calculated with CCL")
+    plt.savefig('CCL.png')
     plt.show()
     return int(cx), int(cy)
+
 
 if __name__ == '__main__':
     image_path = "images/dw/image100.png"
     superpixels_centroid = superpixels(image_path, 100, 10)
+
     # Superpixels
-    # felzenszwalb
+    # Felzenszwalb
 
     start = time.time()
-    superpixels_centroid.calculate_superpixels_slic()
+    superpixels_centroid.calculate_superpixels_felzenszwalb()
     end = time.time()
     superpixels_felzenszwalb_time = end - start
 

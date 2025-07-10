@@ -1,4 +1,4 @@
-Image,Felzenszwalb Time,SLIC Time,Quickshift Time,OpenCV Centroid Time,Scikit-image Centroid Time
+Image,Felzenszwalb Time,SLIC Time,Quickshift Time,FBM Time,CCL Time
 image0.png,6.125316381,8.931774378,28.79107618,0.01915764809,0.371742487
 image1.png,5.814031124,6.665062904,28.15174031,0.01807069778,0.5593390465
 image10.png,5.223087549,6.33905673,28.3820374,0.01416635513,0.4356446266
