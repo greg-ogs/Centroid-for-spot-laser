@@ -3,6 +3,8 @@ This main.py script is used to process all images in the images directory and ca
 each algorithm but .
 The script uses the centroid_calculator.py file to calculate the centroid for each image.
 '''
+import csv
+from fileinput import filename
 
 from centroid_calculator import *
 import os
@@ -69,14 +71,24 @@ def process_image(path):
         print("CCL time: " + str(CCL_time))
 
         result = {
-            'image': image_path,
-            'slic': superpixels_SLIC_time,
-            'felzenszwalb': superpixels_felzenszwalb_time,
-            'quickshift': superpixels_quickshift_time,
-            'FBM': FBM_time,
-            'CCL': CCL_time
+            'Image': image_path,
+            'SLIC Time': superpixels_SLIC_time,
+            'Felzenszwalb Time': superpixels_felzenszwalb_time,
+            'Quickshift Time': superpixels_quickshift_time,
+            'FBM Time': FBM_time,
+            'CCL Time': CCL_time
         }
         results.append(result)
+
+    csv_file = f"results-{path}.csv".replace("/", "")
+
+    header = ["Image", "SLIC Time", "Felzenszwalb Time", "Quickshift Time", "FBM Time", "CCL Time"]
+
+    with open(csv_file, mode="w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=header)
+        writer.writeheader()
+        writer.writerows(results)
+    print(f"\nResults saved to {csv_file}")
 
     # Print summary
     print("\n===== SUMMARY =====")
@@ -84,11 +96,11 @@ def process_image(path):
 
     # Calculate averages
     if results:
-        avg_slic = sum(r['slic'] for r in results) / len(results)
-        avg_felzenszwalb = sum(r['felzenszwalb'] for r in results) / len(results)
-        avg_quickshift = sum(r['quickshift'] for r in results) / len(results)
-        avg_FBM = sum(r['FBM'] for r in results) / len(results)
-        avg_CCL = sum(r['CCL'] for r in results) / len(results)
+        avg_slic = sum(r['SLIC Time'] for r in results) / len(results)
+        avg_felzenszwalb = sum(r['Felzenszwalb Time'] for r in results) / len(results)
+        avg_quickshift = sum(r['Quickshift Time'] for r in results) / len(results)
+        avg_FBM = sum(r['FBM Time'] for r in results) / len(results)
+        avg_CCL = sum(r['CCL Time'] for r in results) / len(results)
 
         print("\nAverage processing times:")
         print(f"Superpixels SLIC: {avg_slic:.6f} seconds")
@@ -111,8 +123,7 @@ if __name__ == '__main__':
     path = []
     threads = []  # List to store threads
     for path in image_directory_paths:
-        process_image(path)
-        # thread = Thread(target=process_image, args=(path,))
-        # threads.append(thread)
-        # thread.start()
+        thread = Thread(target=process_image, args=(path,))
+        threads.append(thread)
+        thread.start()
 
