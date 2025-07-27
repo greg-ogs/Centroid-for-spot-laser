@@ -80,6 +80,7 @@ def test_algorithms_on_all_images(directory_path, n_segments=100, compactness=10
 if __name__ == "__main__":
     dataset_directory = "images"
     image_directory_paths = []
+    # Warning, only directory paths allowed in the root directory
     for image_directory in os.listdir(dataset_directory):
         image_directory_paths.append(os.path.join(dataset_directory, image_directory))
     threads = []  # List to store threads

@@ -201,7 +201,7 @@ class superpixels:
                 # individualCoor = [coor[0][j],coor[1][j]]#coordenada individual de cda pixel del segemento
                 coorVal = image[coor[0][j]][coor[1][j]][0]  # valaor de cada pixel del segmento
                 meansum.append(coorVal)  # se agrega el valor a un vector
-            segmentVal = np.mean(meansum)  # media
+            segmentVal = np.mean(meansum)  # promedio de valores para cada segmento
             values.append(segmentVal)  # agrega ese valor a una variable (la media de cada segmento)
         maxsegment = np.where(values == np.amax(values))  # elige segmento con valor maximo
         maxS = maxsegment[0] + 1  # compensacion del 0 en el indice del array
