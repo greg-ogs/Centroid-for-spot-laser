@@ -5,12 +5,14 @@ The script uses the centroid_calculator.py file to calculate the centroid for ea
 '''
 import csv
 from fileinput import filename
+from datasets import load_dataset
+
 
 from centroid_calculator import *
 import os
 from threading import Thread
 
-def process_image(path):
+def process_local_dataset(path):
     image_files = []
     for root, dirs, files in os.walk(path):
         for file in files:
@@ -123,7 +125,7 @@ if __name__ == '__main__':
     path = []
     threads = []  # List to store threads
     for path in image_directory_paths:
-        thread = Thread(target=process_image, args=(path,))
+        thread = Thread(target=process_local_dataset, args=(path,))
         threads.append(thread)
         thread.start()
 
