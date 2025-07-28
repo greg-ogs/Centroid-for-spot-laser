@@ -5,7 +5,7 @@ The script uses the centroid_calculator.py file to calculate the centroid for ea
 '''
 import csv
 from fileinput import filename
-from datasets import load_dataset
+# from datasets import load_dataset
 
 
 from centroid_calculator import *
@@ -82,7 +82,7 @@ def process_local_dataset(path):
         }
         results.append(result)
 
-    csv_file = f"results-{path}.csv".replace("/", "")
+    csv_file = f"results-{path}.csv".replace("/", "").replace("\\", "") # For linux & windows
 
     header = ["Image", "SLIC Time", "Felzenszwalb Time", "Quickshift Time", "FBM Time", "CCL Time"]
 
