@@ -32,7 +32,7 @@ def process_local_dataset(path):
     image_path = []
     for image_path in image_files:
         print(f"\nProcessing image: {image_path}")
-        superpixels_centroid = superpixels(image_path, 100, 10)
+        superpixels_centroid = Superpixels(image_path, 100, 10)
 
         # Superpixels - felzenszwalb
         start = time.time()
