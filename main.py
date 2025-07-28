@@ -125,7 +125,8 @@ if __name__ == '__main__':
     path = []
     threads = []  # List to store threads
     for path in image_directory_paths:
-        thread = Thread(target=process_local_dataset, args=(path,))
-        threads.append(thread)
-        thread.start()
+        process_local_dataset(path)
+        # thread = Thread(target=process_local_dataset, args=(path,))
+        # threads.append(thread)
+        # thread.start()
 
