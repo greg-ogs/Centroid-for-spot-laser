@@ -5,9 +5,6 @@ The script uses the centroid_calculator.py file to calculate the centroid for ea
 '''
 import csv
 from fileinput import filename
-# from datasets import load_dataset
-
-
 from centroid_calculator import *
 import os
 from threading import Thread
