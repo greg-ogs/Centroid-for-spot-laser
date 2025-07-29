@@ -1,5 +1,4 @@
 import time
-
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,8 +10,6 @@ from skimage.measure import label, regionprops, find_contours
 from skimage.morphology import closing, disk
 from skimage.segmentation import slic, mark_boundaries
 from skimage.util import img_as_float
-from image_as_3d import ImageAs3D
-
 
 class Superpixels:
     """
@@ -71,7 +68,7 @@ class Superpixels:
         ax_3d = fig_3d.add_subplot(111, projection='3d')
 
         # Plot the 3D surface
-        stride = 10  # Use a smaller stride for more detail
+        stride = 1  # Use a smaller stride for more detail
         # Scale the z-axis (intensity) to 256
         scaled_intensity = rotated_gray_image_meth[::stride, ::stride] * 256
         ax_3d.plot_wireframe(x_grid_meth[::stride, ::stride], y_grid_meth[::stride, ::stride],
@@ -185,7 +182,7 @@ class Superpixels:
 
         gray_image_2d, image = self.superpixels_images
 
-        segments = quickshift(image, kernel_size=21, max_dist=71, ratio=5)
+        segments = quickshift(image, kernel_size=21, max_dist=50, ratio=5)
         X, Y = self.center_of_spot(image, segments)
         print('Quick-shift centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
         # Show the output of Quickshift

@@ -1,10 +1,12 @@
-'''
+"""
 This main.py script is used to process all images in the images directory and calculate the average processing times for
-each algorithm but .
+each algorithm.
+Also creates a CSV file with the results and plots for each image.
+Each image plot is only for visualization purposes, must be commented for actual comparison tests.
 The script uses the centroid_calculator.py file to calculate the centroid for each image.
-'''
+"""
+
 import csv
-from fileinput import filename
 from centroid_calculator import *
 import os
 from threading import Thread
@@ -26,22 +28,21 @@ def process_local_dataset(path):
 
     # Process each image
     results = []
-    image_path = []
     for image_path in image_files:
         print(f"\nProcessing image: {image_path}")
         superpixels_centroid = Superpixels(image_path, 100, 10)
 
         # SLIC
-        start = time.time()
+        reset = time.time()
         superpixels_centroid.calculate_superpixels_slic()
         end = time.time()
-        superpixels_SLIC_time = end - start
+        superpixels_slic_time = end - reset
 
         # Superpixels - felzenszwalb
-        start = time.time()
+        reset = time.time()
         superpixels_centroid.calculate_superpixels_felzenszwalb()
         end = time.time()
-        superpixels_felzenszwalb_time = end - start
+        superpixels_felzenszwalb_time = end - reset
 
         # Quickshift
         reset = time.time()
@@ -53,29 +54,29 @@ def process_local_dataset(path):
         reset = time.time()
         calculate_centroid(image_path)
         end = time.time()
-        FBM_time = end - reset
+        fbm_time = end - reset
 
         # CCL
         reset = time.time()
         calculate_centroid_scikit(image_path)
         end = time.time()
-        CCL_time = end - reset
+        ccl_time = end - reset
 
         # Print results for this image
         print(f"Results for {image_path}:")
-        print("Superpixels slic time: " + str(superpixels_SLIC_time))
+        print("Superpixels slic time: " + str(superpixels_slic_time))
         print("Superpixels felzenszwalb time: " + str(superpixels_felzenszwalb_time))
         print("Superpixels quickshift time: " + str(superpixels_quickshift_time))
-        print("FBM time: " + str(FBM_time))
-        print("CCL time: " + str(CCL_time))
+        print("FBM time: " + str(fbm_time))
+        print("CCL time: " + str(ccl_time))
 
         result = {
             'Image': image_path,
-            'SLIC Time': superpixels_SLIC_time,
+            'SLIC Time': superpixels_slic_time,
             'Felzenszwalb Time': superpixels_felzenszwalb_time,
             'Quickshift Time': superpixels_quickshift_time,
-            'FBM Time': FBM_time,
-            'CCL Time': CCL_time
+            'FBM Time': fbm_time,
+            'CCL Time': ccl_time
         }
         results.append(result)
 
@@ -98,20 +99,19 @@ def process_local_dataset(path):
         avg_slic = sum(r['SLIC Time'] for r in results) / len(results)
         avg_felzenszwalb = sum(r['Felzenszwalb Time'] for r in results) / len(results)
         avg_quickshift = sum(r['Quickshift Time'] for r in results) / len(results)
-        avg_FBM = sum(r['FBM Time'] for r in results) / len(results)
-        avg_CCL = sum(r['CCL Time'] for r in results) / len(results)
+        avg_fbm = sum(r['FBM Time'] for r in results) / len(results)
+        avg_ccl = sum(r['CCL Time'] for r in results) / len(results)
 
         print("\nAverage processing times:")
         print(f"Superpixels SLIC: {avg_slic:.6f} seconds")
         print(f"Superpixels Felzenszwalb: {avg_felzenszwalb:.6f} seconds")
         print(f"Superpixels Quickshift: {avg_quickshift:.6f} seconds")
-        print(f"FBM: {avg_FBM:.6f} seconds")
-        print(f"Scikit centroid: {avg_CCL:.6f} seconds")
+        print(f"FBM: {avg_fbm:.6f} seconds")
+        print(f"Scikit centroid: {avg_ccl:.6f} seconds")
 
 
 if __name__ == '__main__':
     # Find all PNG images in the images directory and its subdirectories
-    image_files = []
     dataset_directory = "images"
     image_directory_paths = []
     # Generate a list with all the directories in the root path
@@ -119,11 +119,11 @@ if __name__ == '__main__':
     for image_directory in os.listdir(dataset_directory):
         image_directory_paths.append(os.path.join(dataset_directory, image_directory))
 
-    path = []
+    actual_path = []
     threads = []  # List to store threads
-    for path in image_directory_paths:
-        process_local_dataset(path)
-        # thread = Thread(target=process_local_dataset, args=(path,))
+    for actual_path in image_directory_paths:
+        process_local_dataset(actual_path)
+        # thread = Thread(target=process_local_dataset, args=(actual_path,))
         # threads.append(thread)
         # thread.start()
 
