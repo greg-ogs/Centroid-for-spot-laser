@@ -31,17 +31,17 @@ def process_local_dataset(path):
         print(f"\nProcessing image: {image_path}")
         superpixels_centroid = Superpixels(image_path, 100, 10)
 
-        # Superpixels - felzenszwalb
-        start = time.time()
-        superpixels_centroid.calculate_superpixels_felzenszwalb()
-        end = time.time()
-        superpixels_felzenszwalb_time = end - start
-
         # SLIC
         start = time.time()
         superpixels_centroid.calculate_superpixels_slic()
         end = time.time()
         superpixels_SLIC_time = end - start
+
+        # Superpixels - felzenszwalb
+        start = time.time()
+        superpixels_centroid.calculate_superpixels_felzenszwalb()
+        end = time.time()
+        superpixels_felzenszwalb_time = end - start
 
         # Quickshift
         reset = time.time()

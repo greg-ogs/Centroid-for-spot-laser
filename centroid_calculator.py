@@ -63,7 +63,7 @@ class Superpixels:
         self.superpixels_images = [gray_image, image_for_super_process]
 
     @staticmethod
-    def plot_wireframe(actual_algorithm, rotated_gray_image_meth, x_grid_meth, y_grid_meth, rotated_segments_meth, h_rot_meth, w_rot_meth):
+    def plot_wireframe(actual_algorithm, rotated_gray_image_meth, x_grid_meth, y_grid_meth, rotated_segments_meth, h_rot_meth, w_rot_meth, X_meth, Y_meth):
         # Plot the center using a wireframe
 
         # Create 3D plot
@@ -71,7 +71,7 @@ class Superpixels:
         ax_3d = fig_3d.add_subplot(111, projection='3d')
 
         # Plot the 3D surface
-        stride = 1  # Use a smaller stride for more detail
+        stride = 10  # Use a smaller stride for more detail
         # Scale the z-axis (intensity) to 256
         scaled_intensity = rotated_gray_image_meth[::stride, ::stride] * 256
         ax_3d.plot_wireframe(x_grid_meth[::stride, ::stride], y_grid_meth[::stride, ::stride],
@@ -88,6 +88,9 @@ class Superpixels:
                 # Scale the z-axis (intensity) to 256 and raise slightly for visibility
                 z_contour = rotated_gray_image_meth[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
+
+        ax_3d.scatter(Y_meth, 1280 - X_meth, 256, c='red', s=250, marker='o', depthshade=True,
+                      label='Centroid')
 
         ax_3d.set_xlabel('X')
         ax_3d.set_ylabel('Y')
@@ -164,7 +167,8 @@ class Superpixels:
         plt.show()
 
         # Plot the center using a wireframe
-        self.plot_wireframe("SLIC", rotated_gray_image, x_grid, y_grid, rotated_segments, h_rot, w_rot)
+        self.plot_wireframe("SLIC", rotated_gray_image, x_grid, y_grid, rotated_segments,
+                            h_rot, w_rot, X, Y)
 
 
     def calculate_superpixels_quickshift(self):
@@ -181,7 +185,7 @@ class Superpixels:
 
         gray_image_2d, image = self.superpixels_images
 
-        segments = quickshift(image, kernel_size=11, max_dist=9, ratio=5)
+        segments = quickshift(image, kernel_size=21, max_dist=71, ratio=5)
         X, Y = self.center_of_spot(image, segments)
         print('Quick-shift centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
         # Show the output of Quickshift
@@ -232,7 +236,8 @@ class Superpixels:
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
 
         # Plot the center using a wireframe
-        self.plot_wireframe("Quickshift", rotated_gray_image, x_grid, y_grid, rotated_segments, h_rot, w_rot)
+        self.plot_wireframe("Quickshift", rotated_gray_image, x_grid, y_grid, rotated_segments,
+                            h_rot, w_rot, X, Y)
 
     def calculate_superpixels_felzenszwalb(self):
         """
@@ -299,7 +304,8 @@ class Superpixels:
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
 
         # Plot the center using a wireframe
-        self.plot_wireframe("Felzenszwalb", rotated_gray_image, x_grid, y_grid, rotated_segments, h_rot, w_rot)
+        self.plot_wireframe("Felzenszwalb", rotated_gray_image, x_grid, y_grid, rotated_segments,
+                            h_rot, w_rot, X, Y)
 
     @staticmethod
     def center_of_spot(image, segments):
