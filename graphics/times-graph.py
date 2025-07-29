@@ -11,7 +11,7 @@ class TimesGraph:
         # Reshape the DataFrame to long format
         # We keep the original image column only for reference during reshaping; it will not be used in the plot.
         time_columns = ["Felzenszwalb Time", "SLIC Time", "Quickshift Time",
-                        "OpenCV Centroid Time", "Scikit-image Centroid Time"]
+                        "FBM Time", "CCL Time"]
         self.df_long = self.df.melt(id_vars=["Image"], value_vars=time_columns,
                                     var_name="Algorithm", value_name="Time")
         print(self.df_long.head())
@@ -48,14 +48,20 @@ class TimesGraph:
     def strip_plot(self):
         # Strip plot using the 'white' style for a minimalist look
         sns.set(style="white")
-        plt.figure(figsize=(10, 6))
-        sns.stripplot(x="Algorithm", y="Time", data=self.df_long, jitter=True, palette="muted", hue="Algorithm",
+        # plt.figure(figsize=(10, 6))
+        plt.rcParams['figure.figsize'] = 14, 14
+        plt.rcParams.update({'font.size': 45})
+        sns.stripplot(x="Algorithm", y="Time", data=self.df_long, jitter=True, palette="colorblind", hue="Algorithm",
                       legend=False)
         plt.xticks(rotation=45)
-        plt.title("Algorithm Times")
-        plt.xlabel("Algorithm")
-        plt.ylabel("Time (seconds)")
+        # plt.title("Algorithm Times")
+        plt.xlabel("Algorithm", fontsize=25)
+        plt.ylabel("Time (seconds)", fontsize=25)
+        plt.yticks(fontsize=25)
+        plt.xticks(fontsize=25)
+        # plt.legend(fontsize=30, loc="upper left")
         plt.tight_layout()
+        plt.savefig("times-plot.png")
         plt.show()
 
     def point_plot(self):
@@ -101,9 +107,9 @@ class TimesGraph:
 
 if __name__ == "__main__":
     times_graph = TimesGraph()
-    times_graph.boxplot()
-    times_graph.violinplot()
+    # times_graph.boxplot()
+    # times_graph.violinplot()
     times_graph.strip_plot()
-    times_graph.point_plot()
-    times_graph.lineplot()
-    times_graph.histogram()
+    # times_graph.point_plot()
+    # times_graph.lineplot()
+    # times_graph.histogram()
