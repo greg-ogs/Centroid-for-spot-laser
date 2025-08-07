@@ -26,8 +26,8 @@ class ImageAs3D:
         return img
 
     @staticmethod
-    def convert_to_3d(img):
-        stride = 10
+    def convert_to_3d(img, i):
+        stride = 1
         # Create coordinate matrices
         y, x = np.mgrid[0:img.shape[0], 0:img.shape[1]]
 
@@ -39,21 +39,22 @@ class ImageAs3D:
         # wire = ax.plot_wireframe(x[::stride, ::stride],
         #                          y[::stride, ::stride],
         #                          img[::stride, ::stride],
-        #                          color='red')
+        #                          color='red', cmap='viridis')
 
         # Plot Surface
         wire = ax.plot_surface(x[::stride, ::stride],
                                  y[::stride, ::stride],
                                  img[::stride, ::stride],
-                                 color='#FFF000', cmap='viridis')
+                                 cmap='viridis')
 
         ax.set_xlabel('X')
         ax.tick_params(axis='both', which='major', labelsize=30)
         ax.set_ylabel('Y')
         ax.set_zlabel('Intensity')
 
-        ax.view_init(elev=25, azim=280)
-
+        ax.view_init(elev=10, azim=100)
+        fig_name = f"3d-airy-{i}"
+        plt.savefig(fig_name, dpi=500)
         plt.show()
 
 if __name__ == "__main__":
@@ -71,12 +72,10 @@ if __name__ == "__main__":
     print(f"Found {len(image_files)} images to process:")
     for img in image_files:
         print(f"- {img}")
-
+    i = 0
     for image_path in image_files:
+        i = i + 1
         im3d = ImageAs3D(image_path)
         image = im3d.read_gray()
-        im3d.convert_to_3d(image)
+        im3d.convert_to_3d(image, i)
         del im3d
-
-
-

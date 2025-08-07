@@ -24,7 +24,7 @@ class Superpixels:
     :ivar image_ref: Path to the image to be processed.
     :type image_ref: str
     """
-    def __init__(self, image_path, num_of_segments=100, a_compactness=10):
+    def __init__(self, image_path, num_of_segments=75, a_compactness=10):
         """
         Initializes the segmentation object with image path, number of segments,
         and compactness value. These parameters are used to configure the
@@ -94,6 +94,7 @@ class Superpixels:
         ax_3d.set_zlabel('Intensity')
         ax_3d.view_init(elev=50, azim=280)
         ax_3d.legend(fontsize=20)
+        plt.savefig(f'{actual_algorithm}wireframe.png')
         plt.show()
 
     def calculate_superpixels_slic(self):
@@ -160,7 +161,7 @@ class Superpixels:
                 # Scale the z-axis (intensity) to 256 and raise slightly for visibility
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
-
+        plt.savefig(f'SLIC-surface.png')
         plt.show()
 
         # Plot the center using a wireframe
@@ -231,6 +232,8 @@ class Superpixels:
                 # Scale the z-axis (intensity) to 256 and raise slightly for visibility
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
+        plt.savefig(f'quick-surface.png')
+        plt.show()
 
         # Plot the center using a wireframe
         self.plot_wireframe("Quickshift", rotated_gray_image, x_grid, y_grid, rotated_segments,
@@ -300,6 +303,8 @@ class Superpixels:
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
 
+        plt.savefig(f'Felzenszwalb-surface.png')
+        plt.show()
         # Plot the center using a wireframe
         self.plot_wireframe("Felzenszwalb", rotated_gray_image, x_grid, y_grid, rotated_segments,
                             h_rot, w_rot, X, Y)
@@ -490,8 +495,8 @@ def calculate_centroid_scikit(image_path):
 
 
 if __name__ == '__main__':
-    image_path = "images/c/image0.png"
-    superpixels_centroid = Superpixels(image_path, 100, 10)
+    image_path = "images/l0/image100.png"
+    superpixels_centroid = Superpixels(image_path, 50, 10)
 
     # Superpixels
     # SLIC
