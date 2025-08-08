@@ -15,7 +15,7 @@ def process_local_dataset(path):
     image_files = []
     for root, dirs, files in os.walk(path):
         for file in files:
-            if file.endswith(".png"):
+            if file.endswith(".png") or file.endswith(".jpg"):
                 # Skip result images (those that are named after algorithms)
                 if not any(file.startswith(alg_result) for alg_result in ["CCL", "FBM", "Felzenszwalb", "Quickshift", "SLIC"]):
                     # Use forward slashes for compatibility with the existing code
@@ -122,8 +122,10 @@ if __name__ == '__main__':
     actual_path = []
     threads = []  # List to store threads
     for actual_path in image_directory_paths:
-        process_local_dataset(actual_path)
-        # thread = Thread(target=process_local_dataset, args=(actual_path,))
-        # threads.append(thread)
-        # thread.start()
+        # process_local_dataset(actual_path)
+        thread = Thread(target=process_local_dataset, args=(actual_path,))
+        threads.append(thread)
+        thread.start()
 
+    for i_thread in threads:
+        i_thread.join()

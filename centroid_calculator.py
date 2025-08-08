@@ -35,7 +35,7 @@ class Superpixels:
         :type image_path: str
         :param num_of_segments: The desired number of segments to divide the
             image into for segmentation. Default is 100.
-        :type num_of_segments: int, optional
+        :type num_of_segments: int, optionally
         :param a_compactness: Controls the compactness of Superpixels. Higher
             values result in more square-like segments. Default is 10.
         :type a_compactness: int, optional
@@ -60,7 +60,7 @@ class Superpixels:
         self.superpixels_images = [gray_image, image_for_super_process]
 
     @staticmethod
-    def plot_wireframe(actual_algorithm, rotated_gray_image_meth, x_grid_meth, y_grid_meth, rotated_segments_meth, h_rot_meth, w_rot_meth, X_meth, Y_meth):
+    def plot_wireframe(actual_algorithm, rotated_gray_image_meth, x_grid_meth, y_grid_meth, rotated_segments_meth, h_rot_meth, w_rot_meth, x_meth, y_meth, stride=10):
         # Plot the center using a wireframe
 
         # Create 3D plot
@@ -68,7 +68,7 @@ class Superpixels:
         ax_3d = fig_3d.add_subplot(111, projection='3d')
 
         # Plot the 3D surface
-        stride = 1  # Use a smaller stride for more detail
+        # Use a smaller stride for more detail
         # Scale the z-axis (intensity) to 256
         scaled_intensity = rotated_gray_image_meth[::stride, ::stride] * 256
         ax_3d.plot_wireframe(x_grid_meth[::stride, ::stride], y_grid_meth[::stride, ::stride],
@@ -86,12 +86,12 @@ class Superpixels:
                 z_contour = rotated_gray_image_meth[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
 
-        ax_3d.scatter(Y_meth, 1280 - X_meth, 256, c='red', s=250, marker='o', depthshade=True,
+        ax_3d.scatter(y_meth, 1280 - x_meth, 256, c='red', s=250, marker='o', depthshade=True,
                       label='Centroid')
 
-        ax_3d.set_xlabel('X')
-        ax_3d.set_ylabel('Y')
-        ax_3d.set_zlabel('Intensity')
+        # ax_3d.set_xlabel('X')
+        # ax_3d.set_ylabel('Y')
+        # ax_3d.set_zlabel('Intensity')
         ax_3d.view_init(elev=50, azim=280)
         ax_3d.legend(fontsize=20)
         plt.savefig(f'{actual_algorithm}wireframe.png')
@@ -113,25 +113,25 @@ class Superpixels:
         gray_image_2d, image = self.superpixels_images
 
         segments = slic(image, n_segments=self.n_segments, compactness=self.compactness, sigma=5)
-        X, Y = self.center_of_spot(image, segments)
-        print('SLIC centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y))
+        x, y = self.center_of_spot(image, segments)
+        print('SLIC centroid coordinates are in X = ' + str(x) + ' & Y = ' + str(y))
 
         # Show the output of SLIC
         plt.rcParams.update({'font.size': 30})
-        fig = plt.figure("Superpixels -- SLIC (%d segments)" % (self.n_segments), figsize=(11, 12.8))
+        fig = plt.figure("Superpixels -- SLIC (%d segments)" % self.n_segments, figsize=(11, 12.8))
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(np.rot90(mark_boundaries(image, segments)), origin='lower')
-        plt.plot(Y, 1280-X, marker='o', markersize=15, color='red')  # Swap X and Y for the rotated plot
+        plt.plot(y, 1280-x, marker='o', markersize=15, color='red')  # Swap X and Y for the rotated plot
         # plt.title("Superpixels -- SLIC (%d segments)" % (self.n_segments))
-        plt.xlabel("pixeles")
-        plt.ylabel("pixeles")
+        plt.xlabel("pixels")
+        plt.ylabel("pixels")
         plt.axis("on")
         plt.savefig('SLIC.png')
         plt.show()
 
         # Show the output of slic as 3d graphic
 
-        h, w = gray_image_2d.shape
+        # h, w = gray_image_2d.shape
 
         # Rotate image and segments for consistency with 2D plot
         rotated_gray_image = np.rot90(gray_image_2d)
@@ -166,7 +166,7 @@ class Superpixels:
 
         # Plot the center using a wireframe
         self.plot_wireframe("SLIC", rotated_gray_image, x_grid, y_grid, rotated_segments,
-                            h_rot, w_rot, X, Y)
+                            h_rot, w_rot, x, y)
 
 
     def calculate_superpixels_quickshift(self):
@@ -184,25 +184,25 @@ class Superpixels:
         gray_image_2d, image = self.superpixels_images
 
         segments = quickshift(image, kernel_size=21, max_dist=50, ratio=5)
-        X, Y = self.center_of_spot(image, segments)
-        print('Quick-shift centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
+        x, y = self.center_of_spot(image, segments)
+        print('Quick-shift centroid coordinates are in X = ' + str(x) + ' & Y = ' + str(y) )
         # Show the output of Quickshift
         plt.rcParams.update({'font.size': 30})
         plt.rcParams['figure.figsize'] = 11, 12.8
         fig = plt.figure("Superpixels -- Quickshift")
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(np.rot90(mark_boundaries(image, segments)), origin='lower')
-        plt.plot(Y, 1280-X, marker='o', markersize=15, color='red')
+        plt.plot(y, 1280-x, marker='o', markersize=15, color='red')
         # plt.title("Superpixels -- Quickshift")
-        plt.xlabel("pixeles")
-        plt.ylabel("pixeles")
+        plt.xlabel("pixels")
+        plt.ylabel("pixels")
         plt.axis("on")
         plt.savefig('Quickshift.png')
         plt.show()
 
-        # Show the output of quickshift as 3d graphic
+        # Show the output of quickshift as a 3d graphic
 
-        h, w = gray_image_2d.shape
+        # h, w = gray_image_2d.shape
 
         # Rotate image and segments for consistency with 2D plot
         rotated_gray_image = np.rot90(gray_image_2d)
@@ -237,7 +237,7 @@ class Superpixels:
 
         # Plot the center using a wireframe
         self.plot_wireframe("Quickshift", rotated_gray_image, x_grid, y_grid, rotated_segments,
-                            h_rot, w_rot, X, Y)
+                            h_rot, w_rot, x, y)
 
     def calculate_superpixels_felzenszwalb(self):
         """
@@ -254,25 +254,25 @@ class Superpixels:
         gray_image_2d, image = self.superpixels_images
 
         segments = felzenszwalb(image, scale=300, sigma=0.5, min_size=200)
-        X, Y = self.center_of_spot(image, segments)
-        print('Felzenszwalb centroid coordinates are in X = ' + str(X) + ' & Y = ' + str(Y) )
+        x, y = self.center_of_spot(image, segments)
+        print('Felzenszwalb centroid coordinates are in X = ' + str(x) + ' & Y = ' + str(y) )
         # Show the output of Felzenszwalb
         plt.rcParams.update({'font.size': 30})
         plt.rcParams['figure.figsize'] = 11, 12.8
         fig = plt.figure("Superpixels -- Felzenszwalb")
         ax = fig.add_subplot(1, 1, 1)
         ax.imshow(np.rot90(mark_boundaries(image, segments)), origin='lower')
-        plt.plot(Y, 1280-X, marker='o', markersize=15, color='red')
+        plt.plot(y, 1280-x, marker='o', markersize=15, color='red')
         # plt.title("Superpixels -- Felzenszwalb")
-        plt.xlabel("pixeles")
-        plt.ylabel("pixeles")
+        plt.xlabel("pixels")
+        plt.ylabel("pixels")
         plt.axis("on")
         plt.savefig('Felzenszwalb.png')
         plt.show()
 
         # Show the output of felzenszwalb as 3d graphic
 
-        h, w = gray_image_2d.shape
+        # h, w = gray_image_2d.shape
 
         # Rotate image and segments for consistency with 2D plot
         rotated_gray_image = np.rot90(gray_image_2d)
@@ -307,7 +307,7 @@ class Superpixels:
         plt.show()
         # Plot the center using a wireframe
         self.plot_wireframe("Felzenszwalb", rotated_gray_image, x_grid, y_grid, rotated_segments,
-                            h_rot, w_rot, X, Y)
+                            h_rot, w_rot, x, y)
 
     @staticmethod
     def center_of_spot(image, segments):
@@ -343,26 +343,26 @@ class Superpixels:
             meansum = []
             for j in range(arrsiz):
                 # individualCoor = [coor[0][j],coor[1][j]]#coordenada individual de cda pixel del segemento
-                coorVal = image[coor[0][j]][coor[1][j]][0]  # valaor de cada pixel del segmento
-                meansum.append(coorVal)  # se agrega el valor a un vector
-            segmentVal = np.mean(meansum)  # promedio de valores para cada segmento
-            values.append(segmentVal)  # agrega ese valor a una variable (la media de cada segmento)
+                coor_val = image[coor[0][j]][coor[1][j]][0]  # valaor de cada pixel del segmento
+                meansum.append(coor_val)  # se agrega el valor a un vector
+            segment_val = np.mean(meansum)  # promedio de valores para cada segmento
+            values.append(segment_val)  # agrega ese valor a una variable (la media de cada segmento)
         maxsegment = np.where(values == np.amax(values))  # elige segmento con valor maximo
-        maxS = maxsegment[0] + 1  # compensacion del 0 en el indice del array
-        maxseg = maxS[0]
+        max_s = maxsegment[0] + 1  # compensacion del 0 en el indice del array
+        maxseg = max_s[0]
         # print(maxseg)
-        maxVC = np.where(
+        max_vc = np.where(
             segments == maxseg)  # selecciona todas las coordenadas del segmento con valor maximo
         # calcular la distancia desde el segmento hasta el centro
-        arraysz = maxVC[0].shape  # dimencion del conjunto de coordenadas del segmento
+        arraysz = max_vc[0].shape  # dimencion del conjunto de coordenadas del segmento
         arsz = int(arraysz[0] / 2)  # la mitad de ese conjunto
-        XselectCoor = maxVC[1][arsz]  # coordenada intermedia en x
-        X = XselectCoor
-        YselectCoor = maxVC[0][arsz]  # coordenada intermedia en y
-        Y = YselectCoor
-        return X, Y
+        x_select_coor = max_vc[1][arsz]  # coordenada intermedia en x
+        x = x_select_coor
+        y_select_coor = max_vc[0][arsz]  # coordenada intermedia en y
+        y = y_select_coor
+        return x, y
 
-def calculate_centroid(image_path):
+def calculate_centroid(fbm_image_path):
     """
     Calculates the centroid of the largest object in the provided image.
 
@@ -372,14 +372,14 @@ def calculate_centroid(image_path):
     enhance object detection. Once the largest object is identified via contours,
     the centroid is computed using image moments.
 
-    :param image_path: Path to the image file.
-    :type image_path: str
+    :param fbm_image_path: Path to the image file.
+    :type fbm_image_path: str
     :return: A tuple containing the x and y coordinates of the centroid of the
         largest object, or None if no objects are detected.
     :rtype: tuple[int, int] | None
     """
     # Step 1: Read the image
-    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    image = cv2.imread(fbm_image_path, cv2.IMREAD_COLOR)
 
     # Step 2: Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -411,7 +411,7 @@ def calculate_centroid(image_path):
         cx = int(moments['m10'] / moments['m00'])  # X-coordinate of the centroid
         cy = int(moments['m01'] / moments['m00'])  # Y-coordinate of the centroid
     else:
-        # In case of a single point as an object (unlikely in this case)
+        # In the case of a single point as an object (unlikely in this case)
         cx, cy = 0, 0
 
     print(f"Centroid of the object is at: ({cx}, {cy})")
@@ -430,9 +430,33 @@ def calculate_centroid(image_path):
     plt.savefig('FBM.png')
     plt.show()
 
+    # 3D visualization for FBM
+    # Prepare rotated grayscale image normalized to [0,1]
+    rotated_gray_image = np.rot90(gray.astype(np.float32) / 255.0)
+    h_rot, w_rot = rotated_gray_image.shape
+    y_grid, x_grid = np.mgrid[0:h_rot, 0:w_rot]
+
+    # Build segmentation from morph mask for boundary plotting
+    label_image = label(morph > 0)
+    rotated_segments = np.rot90(label_image)
+
+    # Plot 3D surface
+    fig_3d = plt.figure("3D Visualization -- FBM", figsize=(15, 15))
+    ax_3d = fig_3d.add_subplot(111, projection='3d')
+    stride = 1
+    scaled_intensity = rotated_gray_image[::stride, ::stride] * 256
+    ax_3d.plot_surface(x_grid[::stride, ::stride], y_grid[::stride, ::stride],
+                       scaled_intensity,
+                       cmap='viridis', alpha=0.7, linewidth=0)
+    plt.savefig('FBM-surface.png')
+    plt.show()
+
+    # Plot wireframe with centroid overlay
+    Superpixels.plot_wireframe("FBM", rotated_gray_image, x_grid, y_grid, rotated_segments, h_rot, w_rot, cx, cy, 100)
+
     return cx, cy
 
-def calculate_centroid_scikit(image_path):
+def calculate_centroid_scikit(ccl_image_path):
     """
     Calculates the centroid of the largest connected region in a given image using scikit-image.
 
@@ -440,12 +464,12 @@ def calculate_centroid_scikit(image_path):
     operations, and then identifies the largest connected region. The centroid of this region
     is computed and displayed. If no connected regions are found, it returns None.
 
-    :param str image_path: The path to the image file to be processed.
+    :param str ccl_image_path: The path to the image file to be processed.
     :return: A tuple containing the x and y coordinates of the centroid as integers.
     :rtype: tuple[int, int] | None
     """
     # Read the image using scikit-image
-    image = imread(image_path)
+    image = imread(ccl_image_path)
 
     if len(image.shape) == 2:
         gray = image
@@ -491,12 +515,47 @@ def calculate_centroid_scikit(image_path):
     # plt.title("Centrid calculated with CCL")
     plt.savefig('CCL.png')
     plt.show()
+
+    # 3D visualization for CCL
+    # Prepare rotated grayscale image normalized to [0,1]
+    rotated_gray_image = np.rot90(img_as_float(gray))
+    h_rot, w_rot = rotated_gray_image.shape
+    y_grid, x_grid = np.mgrid[0:h_rot, 0:w_rot]
+
+    # Use the label_image for boundaries
+    rotated_segments = np.rot90(label_image)
+
+    # Plot the 3D surface with boundaries overlay
+    fig_3d = plt.figure("3D Visualization -- CCL", figsize=(15, 15))
+    ax_3d = fig_3d.add_subplot(111, projection='3d')
+    stride = 1
+    scaled_intensity = rotated_gray_image[::stride, ::stride] * 256
+    ax_3d.plot_surface(x_grid[::stride, ::stride], y_grid[::stride, ::stride],
+                       scaled_intensity,
+                       cmap='viridis', alpha=0.7, linewidth=0)
+
+    for label_val in np.unique(rotated_segments):
+        contours = find_contours(rotated_segments, level=label_val)
+        for contour in contours:
+            y_contour, x_contour = contour[:, 0].astype(int), contour[:, 1].astype(int)
+            y_contour = np.clip(y_contour, 0, h_rot - 1)
+            x_contour = np.clip(x_contour, 0, w_rot - 1)
+            z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5
+            ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
+
+    plt.savefig('CCL-surface.png')
+    plt.show()
+
+    # Plot wireframe with centroid overlay
+    Superpixels.plot_wireframe("CCL", rotated_gray_image, x_grid, y_grid, rotated_segments, h_rot, w_rot, int(cx),
+                               int(cy), 1)
+
     return int(cx), int(cy)
 
 
 if __name__ == '__main__':
-    image_path = "images/l0/image100.png"
-    superpixels_centroid = Superpixels(image_path, 50, 10)
+    path_to_image = "images/l0/image100.png"
+    superpixels_centroid = Superpixels(path_to_image, 50, 10)
 
     # Superpixels
     # SLIC
@@ -523,14 +582,14 @@ if __name__ == '__main__':
     # cv2 centroid
 
     reset = time.time()
-    calculate_centroid(image_path)
+    calculate_centroid(path_to_image)
     end = time.time()
     cv2_centroid_time = end - reset
 
     # Scikit centroid
 
     reset = time.time()
-    calculate_centroid_scikit(image_path)
+    calculate_centroid_scikit(path_to_image)
     end = time.time()
     scikit_centroid_time = end - reset
 
