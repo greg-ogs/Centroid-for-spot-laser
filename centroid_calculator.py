@@ -61,21 +61,21 @@ class Superpixels:
 
     @staticmethod
     def plot_wireframe(actual_algorithm, rotated_gray_image_meth, x_grid_meth, y_grid_meth, rotated_segments_meth, h_rot_meth, w_rot_meth, x_meth, y_meth, stride=10):
-        # Plot the center using a wireframe
+        # Plot the center using a wireframe-like surface (mesh over a semi-transparent surface)
 
         # Create 3D plot
         fig_3d = plt.figure(f"3D Visualization -- {actual_algorithm}", figsize=(15, 15))
         ax_3d = fig_3d.add_subplot(111, projection='3d')
 
-        # Plot the 3D surface
-        # Use a smaller stride for more detail
+        # Plot the 3D surface with visible mesh edges
         # Scale the z-axis (intensity) to 256
-        scaled_intensity = rotated_gray_image_meth[::stride, ::stride] * 256
-        ax_3d.plot_wireframe(x_grid_meth[::stride, ::stride], y_grid_meth[::stride, ::stride],
-                           scaled_intensity,
-                           cmap='viridis', alpha=0.7, linewidth=0)
+        xs = x_grid_meth[::stride, ::stride]
+        ys = y_grid_meth[::stride, ::stride]
+        zs = rotated_gray_image_meth[::stride, ::stride] * 256
+        # Use plot_surface so that we see a surface and the mesh (edgecolors) similar to Felzenszwalb result
+        ax_3d.plot_surface(xs, ys, zs, cmap='viridis', alpha=0.7, edgecolor='k', linewidth=0.2, antialiased=True)
 
-        # Plot superpixel boundaries on the surface
+        # Plot superpixel/region boundaries on top of the surface
         for label in np.unique(rotated_segments_meth):
             contours = find_contours(rotated_segments_meth, level=label)
             for contour in contours:
@@ -84,14 +84,11 @@ class Superpixels:
                 x_contour = np.clip(x_contour, 0, w_rot_meth - 1)
                 # Scale the z-axis (intensity) to 256 and raise slightly for visibility
                 z_contour = rotated_gray_image_meth[y_contour, x_contour] * 256 + 2.5  # Raise slightly
-                ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
+                ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.0)
 
         ax_3d.scatter(y_meth, 1280 - x_meth, 256, c='red', s=250, marker='o', depthshade=True,
                       label='Centroid')
 
-        # ax_3d.set_xlabel('X')
-        # ax_3d.set_ylabel('Y')
-        # ax_3d.set_zlabel('Intensity')
         ax_3d.view_init(elev=50, azim=280)
         ax_3d.legend(fontsize=20)
         plt.savefig(f'{actual_algorithm}wireframe.png')
@@ -452,7 +449,7 @@ def calculate_centroid(fbm_image_path):
     plt.show()
 
     # Plot wireframe with centroid overlay
-    Superpixels.plot_wireframe("FBM", rotated_gray_image, x_grid, y_grid, rotated_segments, h_rot, w_rot, cx, cy, 100)
+    Superpixels.plot_wireframe("FBM", rotated_gray_image, x_grid, y_grid, rotated_segments, h_rot, w_rot, cx, cy, 4)
 
     return cx, cy
 
