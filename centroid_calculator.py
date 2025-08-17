@@ -72,8 +72,15 @@ class Superpixels:
         xs = x_grid_meth[::stride, ::stride]
         ys = y_grid_meth[::stride, ::stride]
         zs = rotated_gray_image_meth[::stride, ::stride] * 256
-        # Use plot_surface so that we see a surface and the mesh (edgecolors) similar to Felzenszwalb result
-        ax_3d.plot_surface(xs, ys, zs, cmap='viridis', alpha=0.7, edgecolor='k', linewidth=0.2, antialiased=True)
+
+        # ax_3d.scatter(y_meth, 1280 - x_meth, 259, c='red', s=300, marker='o', depthshade=True, alpha=1.0,
+        #               label='Intensity Peak', zorder=10)
+
+        ax_3d.plot([y_meth], [1280 - x_meth], [258], c='red', marker='o', markersize=17,
+                   linestyle='None', label='Intensity Peak', zorder=10)
+
+        ax_3d.plot_surface(xs, ys, zs, cmap='plasma', alpha=0.8, edgecolor='k', linewidth=0.2, antialiased=True,
+                           zorder=1)
 
         # Plot superpixel/region boundaries on top of the surface
         for label in np.unique(rotated_segments_meth):
@@ -86,12 +93,9 @@ class Superpixels:
                 z_contour = rotated_gray_image_meth[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.0)
 
-        ax_3d.scatter(y_meth, 1280 - x_meth, 256, c='red', s=250, marker='o', depthshade=True,
-                      label='Centroid')
-
-        ax_3d.view_init(elev=50, azim=280)
-        ax_3d.legend(fontsize=20)
-        plt.savefig(f'{actual_algorithm}wireframe.png')
+        ax_3d.view_init(elev=40, azim=250)
+        ax_3d.legend(fontsize=40)
+        plt.savefig(f'{actual_algorithm}wireframe.png', dpi=200)
         plt.show()
 
     def calculate_superpixels_slic(self):
@@ -123,7 +127,7 @@ class Superpixels:
         plt.xlabel("pixels")
         plt.ylabel("pixels")
         plt.axis("on")
-        plt.savefig('SLIC.png')
+        plt.savefig('SLIC.png', dpi=200)
         plt.show()
 
         # Show the output of slic as 3d graphic
@@ -146,7 +150,7 @@ class Superpixels:
         scaled_intensity = rotated_gray_image[::stride, ::stride] * 256
         ax_3d.plot_surface(x_grid[::stride, ::stride], y_grid[::stride, ::stride],
                            scaled_intensity,
-                           cmap='viridis', alpha=0.7, linewidth=0)
+                           cmap='plasma', alpha=0.7, linewidth=0)
 
         # Plot superpixel boundaries on the surface
         for label in np.unique(rotated_segments):
@@ -158,7 +162,7 @@ class Superpixels:
                 # Scale the z-axis (intensity) to 256 and raise slightly for visibility
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
-        plt.savefig(f'SLIC-surface.png')
+        plt.savefig(f'SLIC-surface.png', dpi=200)
         plt.show()
 
         # Plot the center using a wireframe
@@ -194,7 +198,7 @@ class Superpixels:
         plt.xlabel("pixels")
         plt.ylabel("pixels")
         plt.axis("on")
-        plt.savefig('Quickshift.png')
+        plt.savefig('Quickshift.png', dpi=200)
         plt.show()
 
         # Show the output of quickshift as a 3d graphic
@@ -217,7 +221,7 @@ class Superpixels:
         scaled_intensity = rotated_gray_image[::stride, ::stride] * 256
         ax_3d.plot_surface(x_grid[::stride, ::stride], y_grid[::stride, ::stride],
                            scaled_intensity,
-                           cmap='viridis', alpha=0.7, linewidth=0)
+                           cmap='plasma', alpha=0.7, linewidth=0)
 
         # Plot superpixel boundaries on the surface
         for label in np.unique(rotated_segments):
@@ -229,7 +233,7 @@ class Superpixels:
                 # Scale the z-axis (intensity) to 256 and raise slightly for visibility
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
-        plt.savefig(f'quick-surface.png')
+        plt.savefig(f'quick-surface.png', dpi=200)
         plt.show()
 
         # Plot the center using a wireframe
@@ -264,7 +268,7 @@ class Superpixels:
         plt.xlabel("pixels")
         plt.ylabel("pixels")
         plt.axis("on")
-        plt.savefig('Felzenszwalb.png')
+        plt.savefig('Felzenszwalb.png', dpi=200)
         plt.show()
 
         # Show the output of felzenszwalb as 3d graphic
@@ -287,7 +291,7 @@ class Superpixels:
         scaled_intensity = rotated_gray_image[::stride, ::stride] * 256
         ax_3d.plot_surface(x_grid[::stride, ::stride], y_grid[::stride, ::stride],
                            scaled_intensity,
-                           cmap='viridis', alpha=0.7, linewidth=0)
+                           cmap='plasma', alpha=0.7, linewidth=0)
 
         # Plot superpixel boundaries on the surface
         for label in np.unique(rotated_segments):
@@ -300,7 +304,7 @@ class Superpixels:
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
 
-        plt.savefig(f'Felzenszwalb-surface.png')
+        plt.savefig(f'Felzenszwalb-surface.png', dpi=200)
         plt.show()
         # Plot the center using a wireframe
         self.plot_wireframe("Felzenszwalb", rotated_gray_image, x_grid, y_grid, rotated_segments,
@@ -424,7 +428,7 @@ def calculate_centroid(fbm_image_path):
     plt.xlabel("pixeles")
     plt.ylabel("pixeles")
     plt.axis("on")
-    plt.savefig('FBM.png')
+    plt.savefig('FBM.png', dpi=200)
     plt.show()
 
     # 3D visualization for FBM
@@ -444,8 +448,8 @@ def calculate_centroid(fbm_image_path):
     scaled_intensity = rotated_gray_image[::stride, ::stride] * 256
     ax_3d.plot_surface(x_grid[::stride, ::stride], y_grid[::stride, ::stride],
                        scaled_intensity,
-                       cmap='viridis', alpha=0.7, linewidth=0)
-    plt.savefig('FBM-surface.png')
+                       cmap='plasma', alpha=0.7, linewidth=0)
+    plt.savefig('FBM-surface.png', dpi=200)
     plt.show()
 
     # Plot wireframe with centroid overlay
@@ -510,7 +514,7 @@ def calculate_centroid_scikit(ccl_image_path):
     plt.ylabel("pixeles")
     plt.axis("on")
     # plt.title("Centrid calculated with CCL")
-    plt.savefig('CCL.png')
+    plt.savefig('CCL.png', dpi=200)
     plt.show()
 
     # 3D visualization for CCL
@@ -529,7 +533,7 @@ def calculate_centroid_scikit(ccl_image_path):
     scaled_intensity = rotated_gray_image[::stride, ::stride] * 256
     ax_3d.plot_surface(x_grid[::stride, ::stride], y_grid[::stride, ::stride],
                        scaled_intensity,
-                       cmap='viridis', alpha=0.7, linewidth=0)
+                       cmap='plasma', alpha=0.7, linewidth=0)
 
     for label_val in np.unique(rotated_segments):
         contours = find_contours(rotated_segments, level=label_val)
@@ -540,7 +544,7 @@ def calculate_centroid_scikit(ccl_image_path):
             z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5
             ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
 
-    plt.savefig('CCL-surface.png')
+    plt.savefig('CCL-surface.png', dpi=200)
     plt.show()
 
     # Plot wireframe with centroid overlay
