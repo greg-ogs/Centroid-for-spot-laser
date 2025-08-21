@@ -1,30 +1,87 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import os
+from typing import Optional
 
 
 class TimesGraph:
-    def __init__(self):
-        # Load the CSV file into a pandas DataFrame
-        self.df = pd.read_csv('times-data.csv')
+    def __init__(self, r_melt=False, csv_input_path=None):
+        if r_melt:
+            self.df_long = self.melt(csv_input_path)
+        else:
+            # Load the CSV file into a pandas DataFrame
+            self.df = pd.read_csv('times-data.csv')
 
-        # Reshape the DataFrame to long format
-        # We keep the original image column only for reference during reshaping; it will not be used in the plot.
-        time_columns = ["Felzenszwalb Time", "SLIC Time", "Quickshift Time",
-                        "FBM Time", "CCL Time"]
-        self.df_long = self.df.melt(id_vars=["Image"], value_vars=time_columns,
-                                    var_name="Algorithm", value_name="Time")
-        print(self.df_long.head())
+            # Reshape the DataFrame to long format
+            # We keep the original image column only for reference during reshaping; it will not be used in the plot.
+            time_columns = ["Felzenszwalb Time", "SLIC Time", "Quickshift Time",
+                            "FBM Time", "CCL Time"]
+            self.df_long = self.df.melt(id_vars=["Image"], value_vars=time_columns,
+                                        var_name="Algorithm", value_name="Time")
+            print(self.df_long.head())
+
+    @staticmethod
+    def melt(csv_path: Optional[str] = None) -> pd.DataFrame:
+        """
+        Melt the dataset in 'times-comparative-peak-intensity-detection.csv' into long format.
+
+        Parameters:
+            csv_path: Optional explicit path to the CSV. If None, the file is resolved
+                      relative to the project root (one level up from this script).
+
+        Returns:
+            pandas.DataFrame: Long-format DataFrame with columns [<id_vars>..., 'Algorithm', 'Time'].
+        """
+        # Resolve default path to the CSV at the project root if not provided
+        if csv_path is None:
+            base_dir = os.path.dirname(__file__)
+            csv_path = os.path.abspath(os.path.join(base_dir, "..", "times-comparative-peak-intensity-detection.csv"))
+
+        # Load the CSV and identify time columns (those ending with ' Time')
+        df_comp = pd.read_csv(csv_path)
+        time_columns = [col for col in df_comp.columns if isinstance(col, str) and col.endswith(" Time")]
+        if not time_columns:
+            raise ValueError("No time columns found to melt in the provided CSV.")
+
+        id_vars = [col for col in df_comp.columns if col not in time_columns]
+
+        # Melt into long format
+        df_comp_long = df_comp.melt(id_vars=id_vars, value_vars=time_columns,
+                                         var_name="Algorithm", value_name="Time")
+
+        # Quick preview for verification during interactive runs
+        print(df_comp_long.head())
+        df_comp_long.to_csv("long-times-comparative-peak-intensity-detection.csv", index=False)
+        return df_comp_long
 
     def boxplot(self):
         # Create a boxplot to compare the times of all algorithms
         sns.set(style="whitegrid")
         plt.figure(figsize=(10, 6))
-        ax = sns.boxplot(x="Algorithm", y="Time", data=self.df_long, palette="Set3", hue="Algorithm", legend=False)
+        ax = sns.boxplot(x="Algorithm", y="Time", data=self.df_long, palette="plasma", hue="Algorithm", legend=False)
 
         # Rotate x-axis labels for better readability
         plt.xticks(rotation=45)
         plt.title("Comparison of Algorithm Execution Times")
+        plt.ylabel("Time (seconds)")
+        plt.xlabel("Algorithm")
+        plt.tight_layout()
+        plt.savefig("times-boxplot.png")
+        # Display the plot
+        plt.show()
+
+    def boxplot_long(self):
+        # Create a boxplot to compare the times of all algorithms
+        sns.set(style="whitegrid")
+        # plt.figure(figsize=(10, 6))
+        ax = sns.catplot(kind="box", x="Algorithm", y="Time", data=self.df_long, palette="plasma", hue="Algorithm",
+                         col="CPU", legend=False, sharey=True, sharex=True, col_wrap=2, height=6, aspect=1.5,
+                         margin_titles=True, legend_out=False)
+
+        # # Rotate x-axis labels for better readability
+        # plt.xticks(rotation=45)
+        # plt.title("Comparison of Algorithm Execution Times")
         plt.ylabel("Time (seconds)")
         plt.xlabel("Algorithm")
         plt.tight_layout()
@@ -37,7 +94,7 @@ class TimesGraph:
         sns.set(style="darkgrid")
         plt.figure(figsize=(10, 6))
         sns.violinplot(x="Algorithm", y="Time", data=self.df_long,
-                       inner="quartile", palette="Set3", hue="Algorithm", legend=False)
+                       inner="quartile", palette="plasma", hue="Algorithm", legend=False)
         plt.xticks(rotation=45)
         plt.title("Algorithm Execution Times - Violin Plot")
         plt.xlabel("Algorithm")
@@ -107,9 +164,10 @@ class TimesGraph:
 
 if __name__ == "__main__":
     times_graph = TimesGraph()
-    # times_graph.boxplot()
+    times_graph.boxplot()
     # times_graph.violinplot()
-    times_graph.strip_plot()
+    # times_graph.strip_plot()
     # times_graph.point_plot()
     # times_graph.lineplot()
     # times_graph.histogram()
+    # TimesGraph.melt()
