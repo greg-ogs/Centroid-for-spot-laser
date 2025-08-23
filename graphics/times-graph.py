@@ -11,7 +11,7 @@ class TimesGraph:
             self.df_long = self.melt(csv_input_path)
         else:
             # Load the CSV file into a pandas DataFrame
-            self.df = pd.read_csv('times-data.csv')
+            self.df = pd.read_csv('times-R-5600X-peak-intensity-detection.csv')
 
             # Reshape the DataFrame to long format
             # We keep the original image column only for reference during reshaping; it will not be used in the plot.
@@ -58,14 +58,16 @@ class TimesGraph:
     def boxplot(self):
         # Create a boxplot to compare the times of all algorithms
         sns.set(style="whitegrid")
-        plt.figure(figsize=(10, 6))
+        plt.figure(figsize=(10, 8))
         ax = sns.boxplot(x="Algorithm", y="Time", data=self.df_long, palette="plasma", hue="Algorithm", legend=False)
 
         # Rotate x-axis labels for better readability
         plt.xticks(rotation=45)
-        plt.title("Comparison of Algorithm Execution Times")
-        plt.ylabel("Time (seconds)")
+        # plt.title("Comparison of Algorithm Execution Times")
+        plt.ylabel("Time (seconds)", fontsize=20)
         plt.xlabel("Algorithm")
+        plt.yticks(fontsize=15)
+        plt.xticks(fontsize=20)
         plt.tight_layout()
         plt.savefig("times-boxplot.png")
         # Display the plot
