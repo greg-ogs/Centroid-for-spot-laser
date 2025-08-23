@@ -30,7 +30,7 @@ def process_local_dataset(path):
     results = []
     for image_path in image_files:
         print(f"\nProcessing image: {image_path}")
-        superpixels_centroid = Superpixels(image_path, 100, 10)
+        superpixels_centroid = Superpixels(image_path, 125, 10) # for red laser beam
 
         # SLIC
         reset = time.time()

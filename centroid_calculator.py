@@ -24,7 +24,7 @@ class Superpixels:
     :ivar image_ref: Path to the image to be processed.
     :type image_ref: str
     """
-    def __init__(self, image_path, num_of_segments=75, a_compactness=10):
+    def __init__(self, image_path, num_of_segments=110, a_compactness=10):
         """
         Initializes the segmentation object with image path, number of segments,
         and compactness value. These parameters are used to configure the
@@ -95,7 +95,7 @@ class Superpixels:
 
         ax_3d.view_init(elev=40, azim=250)
         ax_3d.legend(fontsize=40)
-        plt.savefig(f'{actual_algorithm}wireframe.png', dpi=200)
+        plt.savefig(f'{actual_algorithm}wireframe.png', dpi=150)
         plt.show()
 
     def calculate_superpixels_slic(self):
@@ -127,7 +127,7 @@ class Superpixels:
         plt.xlabel("pixels")
         plt.ylabel("pixels")
         plt.axis("on")
-        plt.savefig('SLIC.png', dpi=200)
+        plt.savefig('SLIC.png', dpi=150)
         plt.show()
 
         # Show the output of slic as 3d graphic
@@ -162,7 +162,7 @@ class Superpixels:
                 # Scale the z-axis (intensity) to 256 and raise slightly for visibility
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
-        plt.savefig(f'SLIC-surface.png', dpi=200)
+        plt.savefig(f'SLIC-surface.png', dpi=150)
         plt.show()
 
         # Plot the center using a wireframe
@@ -198,7 +198,7 @@ class Superpixels:
         plt.xlabel("pixels")
         plt.ylabel("pixels")
         plt.axis("on")
-        plt.savefig('Quickshift.png', dpi=200)
+        plt.savefig('Quickshift.png', dpi=150)
         plt.show()
 
         # Show the output of quickshift as a 3d graphic
@@ -233,7 +233,7 @@ class Superpixels:
                 # Scale the z-axis (intensity) to 256 and raise slightly for visibility
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
-        plt.savefig(f'quick-surface.png', dpi=200)
+        plt.savefig(f'quick-surface.png', dpi=150)
         plt.show()
 
         # Plot the center using a wireframe
@@ -254,7 +254,7 @@ class Superpixels:
 
         gray_image_2d, image = self.superpixels_images
 
-        segments = felzenszwalb(image, scale=300, sigma=0.5, min_size=200)
+        segments = felzenszwalb(image, scale=200, sigma=0.5, min_size=150)
         x, y = self.center_of_spot(image, segments)
         print('Felzenszwalb centroid coordinates are in X = ' + str(x) + ' & Y = ' + str(y) )
         # Show the output of Felzenszwalb
@@ -268,7 +268,7 @@ class Superpixels:
         plt.xlabel("pixels")
         plt.ylabel("pixels")
         plt.axis("on")
-        plt.savefig('Felzenszwalb.png', dpi=200)
+        plt.savefig('Felzenszwalb.png', dpi=150)
         plt.show()
 
         # Show the output of felzenszwalb as 3d graphic
@@ -304,7 +304,7 @@ class Superpixels:
                 z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5  # Raise slightly
                 ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
 
-        plt.savefig(f'Felzenszwalb-surface.png', dpi=200)
+        plt.savefig(f'Felzenszwalb-surface.png', dpi=150)
         plt.show()
         # Plot the center using a wireframe
         self.plot_wireframe("Felzenszwalb", rotated_gray_image, x_grid, y_grid, rotated_segments,
@@ -428,7 +428,7 @@ def calculate_centroid(fbm_image_path):
     plt.xlabel("pixeles")
     plt.ylabel("pixeles")
     plt.axis("on")
-    plt.savefig('FBM.png', dpi=200)
+    plt.savefig('FBM.png', dpi=150)
     plt.show()
 
     # 3D visualization for FBM
@@ -449,7 +449,7 @@ def calculate_centroid(fbm_image_path):
     ax_3d.plot_surface(x_grid[::stride, ::stride], y_grid[::stride, ::stride],
                        scaled_intensity,
                        cmap='plasma', alpha=0.7, linewidth=0)
-    plt.savefig('FBM-surface.png', dpi=200)
+    plt.savefig('FBM-surface.png', dpi=150)
     plt.show()
 
     # Plot wireframe with centroid overlay
@@ -514,7 +514,7 @@ def calculate_centroid_scikit(ccl_image_path):
     plt.ylabel("pixeles")
     plt.axis("on")
     # plt.title("Centrid calculated with CCL")
-    plt.savefig('CCL.png', dpi=200)
+    plt.savefig('CCL.png', dpi=150)
     plt.show()
 
     # 3D visualization for CCL
@@ -544,7 +544,7 @@ def calculate_centroid_scikit(ccl_image_path):
             z_contour = rotated_gray_image[y_contour, x_contour] * 256 + 2.5
             ax_3d.plot(x_contour, y_contour, z_contour, color='black', linewidth=1.5)
 
-    plt.savefig('CCL-surface.png', dpi=200)
+    plt.savefig('CCL-surface.png', dpi=150)
     plt.show()
 
     # Plot wireframe with centroid overlay
@@ -556,7 +556,7 @@ def calculate_centroid_scikit(ccl_image_path):
 
 if __name__ == '__main__':
     path_to_image = "images/l0/image100.png"
-    superpixels_centroid = Superpixels(path_to_image, 50, 10)
+    superpixels_centroid = Superpixels(path_to_image, 125)
 
     # Superpixels
     # SLIC
