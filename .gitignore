@@ -1,2 +1,34 @@
+# IDE / virtualenv
 .idea
 .venv
+.vscode
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Generated outputs (algorithm renderings)
+results/
+*-surface.png
+*wireframe.png
+Bessel_2D.png
+Bessel_3D_Wireframe.png
+Bessel_ROI.png
+
+# Old in-place outputs (kept tracked for now, but never add new ones)
+images/**/CCL.png
+images/**/FBM.png
+images/**/Felzenszwalb.png
+images/**/Quickshift.png
+images/**/SLIC.png
+images/**/Bessel*.png
+
+# Benchmark CSV outputs (root-level only; historic CSVs under data/ are kept)
+/results-*.csv
+/bessel-results-*.csv
+/long-times-comparative-peak-intensity-detection.csv
+
+# OS junk
+.DS_Store
+Thumbs.db
+.claude
