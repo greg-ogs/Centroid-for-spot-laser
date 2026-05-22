@@ -260,13 +260,7 @@ class Superpixels:
 
     def center_of_spot(self, segments: np.ndarray,
                        image: np.ndarray | None = None) -> tuple[int, int]:
-        """Return the central pixel of the brightest segment.
 
-        Considers labels ``0..max(segments)``; non-existent labels are
-        skipped via ``np.nanargmax``. The legacy positional signature
-        ``center_of_spot(image, segments)`` is preserved by accepting an
-        optional image; if it is 3-D the first channel is used as intensity.
-        """
         if image is not None and image is not segments:
             intensity = image[..., 0] if image.ndim == 3 else image
         else:
@@ -317,7 +311,7 @@ class Superpixels:
 
     def render(self, name: str, segments: np.ndarray, x: int, y: int) -> None:
         marked = mark_boundaries(self.image_3ch, segments)
-        plot_2d(name, marked, x, y, self.height, self.output_dir)
+        plot_2d(name, marked, x, y, self.width, self.output_dir)
         plot_3d_surface(name, self.gray, segments, self.output_dir)
         plot_wireframe(name, self.gray, segments, x, y, self.output_dir)
 
@@ -440,7 +434,7 @@ def calculate_centroid_scikit(image_or_path, *, plot: bool = False,
         plt.rcParams.update({"font.size": 30})
         fig, ax = plt.subplots(figsize=(11, 12.8))
         ax.imshow(np.rot90(image), origin="lower")
-        ax.plot(cy, gray.shape[0] - cx, "o", markersize=15, color="red")
+        ax.plot(cy, gray.shape[1] - cx, "o", markersize=15, color="red")
         ax.set_xlabel("pixeles")
         ax.set_ylabel("pixeles")
         save_figure(fig, out, "CCL.png")
@@ -459,7 +453,7 @@ def calculate_centroid_scikit(image_or_path, *, plot: bool = False,
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     print(f"Acceleration: {gpu_utils.device_summary()}")
-    path_to_image = "images/l0/image100.png"
+    path_to_image = "images/c/image0.png"
     sp = Superpixels(path_to_image, 125)
 
     timings = {}
