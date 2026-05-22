@@ -1,14 +1,10 @@
-"""Plotting and format-conversion utilities.
+"""Plotting and format-conversion utilities out of the main pipeline.
 
 Modules
 -------
-* :mod:`source.visualization.image_as_3d`  -- 3-D intensity surfaces.
-* :mod:`source.visualization.times_graph`  -- benchmark-CSV plotting.
-* :mod:`source.visualization.to_eps`       -- raster -> EPS converter.
-
-For convenience the public surface is re-exported:
-
-    from source.visualization import TimesGraph, ImageAs3D, raster_to_eps
+* Module `source.visualization.image_as_3d`  -- 3-D intensity surfaces.
+* Module `source.visualization.times_graph`  -- benchmark-CSV plotting.
+* Module `source.visualization.to_eps`       -- raster -> EPS converter.
 """
 from source.visualization.image_as_3d import ImageAs3D
 from source.visualization.times_graph import TimesGraph

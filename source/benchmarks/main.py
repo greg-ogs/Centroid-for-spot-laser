@@ -28,8 +28,12 @@ from source.core import gpu_utils
 logger = logging.getLogger(__name__)
 
 SKIP_PREFIXES = ("CCL", "FBM", "Felzenszwalb", "Quickshift", "SLIC", "Bessel")
-HEADER = ["Image", "SLIC Time", "Felzenszwalb Time", "Quickshift Time",
-          "FBM Time", "CCL Time"]
+HEADER = ["Image",
+          "SLIC Time", "SLIC X", "SLIC Y",
+          "Felzenszwalb Time", "Felzenszwalb X", "Felzenszwalb Y",
+          "Quickshift Time", "Quickshift X", "Quickshift Y",
+          "FBM Time", "FBM X", "FBM Y",
+          "CCL Time", "CCL X", "CCL Y"]
 
 
 def discover_images(path: str) -> list[str]:
@@ -47,32 +51,34 @@ def benchmark_image(image_path: str, *, plot: bool = False) -> dict:
     sp = Superpixels(image_path, 125, 10)
 
     start = time.time()
-    sp.calculate_superpixels_slic(plot=plot)
+    slicX, slicY, _ = sp.calculate_superpixels_slic(plot=plot)
     slic_t = time.time() - start
 
     start = time.time()
-    sp.calculate_superpixels_felzenszwalb(plot=plot)
+    felzX, felzY, _ = sp.calculate_superpixels_felzenszwalb(plot=plot)
     felz_t = time.time() - start
 
     start = time.time()
-    sp.calculate_superpixels_quickshift(plot=plot)
+    quickX, quickY, _ = sp.calculate_superpixels_quickshift(plot=plot)
     quick_t = time.time() - start
 
     start = time.time()
-    calculate_centroid(image_path, plot=plot)
+    fbmResult = calculate_centroid(image_path, plot=plot)
     fbm_t = time.time() - start
+    fbmX, fbmY = fbmResult if fbmResult is not None else (None, None)
 
     start = time.time()
-    calculate_centroid_scikit(image_path, plot=plot)
+    cclResult = calculate_centroid_scikit(image_path, plot=plot)
     ccl_t = time.time() - start
+    cclX, cclY = cclResult if cclResult is not None else (None, None)
 
     return {
         "Image": image_path,
-        "SLIC Time": slic_t,
-        "Felzenszwalb Time": felz_t,
-        "Quickshift Time": quick_t,
-        "FBM Time": fbm_t,
-        "CCL Time": ccl_t,
+        "SLIC Time": slic_t, "SLIC X": slicX, "SLIC Y": slicY,
+        "Felzenszwalb Time": felz_t, "Felzenszwalb X": felzX, "Felzenszwalb Y": felzY,
+        "Quickshift Time": quick_t, "Quickshift X": quickX, "Quickshift Y": quickY,
+        "FBM Time": fbm_t, "FBM X": fbmX, "FBM Y": fbmY,
+        "CCL Time": ccl_t, "CCL X": cclX, "CCL Y": cclY,
     }
 
 
