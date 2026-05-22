@@ -1,20 +1,16 @@
 """Centroid detection algorithms for laser-spot images.
 
 Public surface:
-  * :class:`Superpixels` - SLIC / Felzenszwalb / Quickshift segmentation
-    plus the spot-centre pick.
-  * :func:`calculate_centroid` - OpenCV moments on the largest contour (FBM).
-  * :func:`calculate_centroid_scikit` - scikit-image CCL on the largest region.
+  - Class `Superpixels` - SLIC / Felzenszwalb / Quickshift segmentation plus the spot-center pick.
+  - Function `calculate_centroid` - OpenCV moments on the largest contour (FBM).
+  - Function `calculate_centroid_scikit` - scikit-image CCL on the largest region.
 
-Each algorithm accepts a ``plot`` keyword argument; with the default
-``plot=False`` the call is suitable for benchmarking. With ``plot=True``
-figures are written into ``output_dir`` (defaulting to
-``results/<image-stem>/``); the directory is created lazily, only when a
-figure is actually saved.
+Each algorithm accepts a "plot" keyword argument; with the default `plot=False`, the call is suitable for benchmarking.
+With `plot=True`, figures are written into `output_dir` (defaulting to `results/<image-stem>/`); the directory is
+created lazily, only when a figure is actually saved.
 
-When CUDA is available (via CuPy), preprocessing steps (Gaussian blur,
-connected-component labelling, label-wise reductions) are pushed to the GPU
-through :mod:`source.core.gpu_utils`. The actual scikit-image segmentation
+When CUDA is available (via CuPy), preprocessing steps (Gaussian blur, connected-component labeling, label-wise
+reductions) are pushed to the GPU through module `source.core.gpu_utils`. The actual scikit-image segmentation
 kernels have no GPU implementation and always run on CPU.
 """
 from __future__ import annotations
@@ -98,7 +94,7 @@ def render_3d(
     suffix: str,
 ) -> None:
     """Render a 3-D intensity surface, optionally with segment boundaries
-    and a centroid marker. Single helper covers both the 'surface' and
+    and a centroid marker. A single helper covers both the 'surface' and
     'wireframe' variants used elsewhere in the module.
     """
     rotated_gray = np.rot90(gray_image)
@@ -157,38 +153,6 @@ def plot_wireframe(name: str, gray_image: np.ndarray,
                surface_alpha=0.8, edge_color="k", edge_linewidth=0.2,
                view=(40, 250), output_dir=output_dir, suffix="wireframe.png")
 
-
-def plot_wireframe_legacy(actual_algorithm, rotated_gray_image_meth, x_grid_meth,
-                           y_grid_meth, rotated_segments_meth, h_rot_meth, w_rot_meth,
-                           x_meth, y_meth, stride=10):
-    """Legacy signature kept for external callers (BesselFitter, demos).
-
-    Pre-computed rotated grids are passed in. New code should call
-    :func:`plot_wireframe` instead.
-    """
-    fig = plt.figure(f"3D Visualization -- {actual_algorithm}", figsize=(15, 15))
-    ax = fig.add_subplot(111, projection="3d")
-
-    xs = x_grid_meth[::stride, ::stride]
-    ys = y_grid_meth[::stride, ::stride]
-    zs = rotated_gray_image_meth[::stride, ::stride] * 256
-
-    ax.plot([y_meth], [h_rot_meth - x_meth], [258], c="red", marker="o",
-            markersize=17, linestyle="None", label="Intensity Peak", zorder=10)
-    ax.plot_surface(xs, ys, zs, cmap="plasma", alpha=0.8, edgecolor="k",
-                    linewidth=0.2, antialiased=True, zorder=1)
-
-    if rotated_segments_meth is not None:
-        boundary = find_boundaries(rotated_segments_meth, mode="outer")
-        ys_b, xs_b = np.where(boundary)
-        if ys_b.size:
-            zs_b = rotated_gray_image_meth[ys_b, xs_b] * 256 + 2.5
-            ax.scatter(xs_b, ys_b, zs_b, c="k", s=0.5, depthshade=False)
-
-    ax.view_init(elev=40, azim=250)
-    ax.legend(fontsize=40)
-    fig.savefig(f"{actual_algorithm}wireframe.png", dpi=150)
-    plt.close(fig)
 
 
 # ---------------------------------------------------------------------------
@@ -315,8 +279,6 @@ class Superpixels:
         plot_3d_surface(name, self.gray, segments, self.output_dir)
         plot_wireframe(name, self.gray, segments, x, y, self.output_dir)
 
-    # Legacy static helper for callers that pre-compute rotated grids.
-    plot_wireframe = staticmethod(plot_wireframe_legacy)
 
 
 # ---------------------------------------------------------------------------
