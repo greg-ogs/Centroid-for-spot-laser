@@ -28,6 +28,9 @@ images/**/Bessel*.png
 /bessel-results-*.csv
 /long-times-comparative-peak-intensity-detection.csv
 
+# Datasets
+images/pointing-laser
+
 # OS junk
 .DS_Store
 Thumbs.db
