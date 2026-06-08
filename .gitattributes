@@ -1,1 +1,14 @@
 * text eol=lf
+
+# Binary formats — never apply line-ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.tiff binary
+*.tif binary
+*.webp binary
+*.eps binary
+*.pdf binary
+*.whl binary
